@@ -1,0 +1,362 @@
+/* Variables base para mantener consistencia */
+:root {
+  --bg-color: #0d1117;
+  --panel-bg: #161b22;
+  --text-primary: #e6edf3;
+  --text-secondary: #7d8590;
+  --accent-color: #b0fb3d; /* Verde neón brillante */
+  --accent-pink: #ff79c6; /* Rosa neón */
+  --border-color: #30363d;
+  --font-mono: 'Courier New', Courier, monospace;
+  --font-pixel: 'Press Start 2P', monospace;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.login-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+/* --- ESTILOS DEL HEADER EXTERNO --- */
+.login-header-container {
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.login-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem; /* Le damos padding a los lados para que el logo no pegue al borde */
+  border-bottom: 1px solid var(--border-color) !important; /* Regresamos la línea sutil de lado a lado */
+}
+.logo {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-family: var(--font-pixel); 
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.logo-icon {
+  color: var(--accent-color);
+  font-size: 1.8rem;
+}
+
+.status-bar {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-dot { color: #ec4899; }
+.status-text { color: #64748b; }
+.status-separator { color: #475569; }
+.status-highlight { color: #ec4899; }
+
+.console-header-wrapper {
+  width: 100%;
+  max-width: 1200px; /* Exactamente el mismo ancho que .login-container */
+  margin-inline: auto; /* Esto lo centra en la pantalla */
+  margin-bottom: 0.5rem; /* Pequeña separación antes de la caja */
+}
+.login-header-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0; /* Quitamos el padding para que pegue justo a los bordes */
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+
+.console-path { color: #64748b; }
+.console-command { color: var(--accent-color); }
+.console-info { color: var(--accent-color); }
+
+/* --- CONTENEDOR PRINCIPAL (LA BÓVEDA) --- */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--panel-bg);
+  border: 2px solid var(--border-color);
+  margin-top: 1rem;
+  max-width: 1200px; 
+  margin-inline: auto;
+  font-family: var(--font-mono);
+}
+
+.box-header, .box-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  font-size: 0.8rem;
+  background-color: #1f242e; 
+  border-bottom: 2px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.box-footer {
+  border-bottom: none;
+  border-top: 2px solid var(--border-color);
+}
+
+.box-header-left {
+  font-family: var(--font-pixel);
+  font-size: 0.7rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.highlight-green {
+  color: var(--accent-color);
+}
+
+.box-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 600px;
+}
+
+/* --- COLUMNA IZQUIERDA (IMAGEN HERO) --- */
+.login-hero {
+  position: relative;
+  border-right: 2px solid var(--border-color);
+  overflow: hidden;
+  background-color: #000;
+}
+
+.hero-tag {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  background: rgba(0,0,0,0.8);
+  padding: 0.5rem 1rem;
+  font-family: var(--font-pixel);
+  font-size: 0.6rem;
+  z-index: 10;
+  border: 1px solid var(--accent-pink);
+  color: var(--text-secondary);
+}
+
+.tag-highlight {
+  color: var(--accent-pink);
+  margin-right: 0.5rem;
+}
+
+.hero-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.8;
+}
+
+.hero-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 3rem 2rem 2rem 2rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+.hearts {
+  color: var(--accent-pink);
+  margin-bottom: 1rem;
+  letter-spacing: 2px;
+}
+
+.hero-overlay h2 {
+  font-family: var(--font-pixel);
+  margin: 0;
+  font-size: 1.4rem;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+
+.hero-subtitle {
+  color: var(--accent-color);
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.hero-footer-text {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  margin-top: 2rem;
+}
+
+/* --- COLUMNA DERECHA (FORMULARIO) --- */
+.login-form-section {
+  padding: 3rem 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.form-header h1 {
+  font-family: var(--font-pixel);
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  line-height: 1.5;
+}
+
+.form-header p {
+  color: var(--text-secondary);
+  margin-bottom: 2.5rem;
+  font-size: 0.9rem;
+}
+
+.input-group {
+  margin-bottom: 2rem;
+}
+
+.input-group label {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.8rem;
+  display: block;
+}
+
+.input-group input {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-color);
+  padding: 1rem;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.input-group input:focus { border-color: var(--accent-color); }
+.input-group input.input-error { border-color: var(--error-color); }
+
+.error-text {
+  color: var(--error-color);
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+/* Botones y Enlaces */
+.btn-primary {
+  width: 100%;
+  background-color: var(--accent-color);
+  color: #000;
+  border: none;
+  padding: 1.2rem;
+  font-family: var(--font-pixel);
+  font-size: 0.7rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #92d62e; /* Un tono un poco más oscuro al pasar el mouse */
+}
+
+.btn-steam {
+  width: 100%;
+  background-color: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 1.2rem;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-steam:hover {
+  background-color: rgba(255,255,255,0.05);
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.forgot-password {
+  color: var(--accent-pink);
+  text-decoration: none;
+}
+
+.forgot-password:hover { text-decoration: underline; }
+
+.divider {
+  text-align: center;
+  margin: 1.5rem 0;
+  position: relative;
+}
+
+.divider span {
+  background-color: var(--panel-bg);
+  padding: 0 10px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  position: relative;
+  z-index: 1;
+}
+
+.divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--border-color);
+  z-index: 0;
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.register-link a {
+  color: var(--accent-pink);
+  text-decoration: none;
+}
+
+.register-link a:hover { text-decoration: underline; }
+
+.login-footer {
+  margin-top: auto;
+  padding-top: 2rem;
+  display: flex;
+  justify-content: center; /* Centrar el texto final */
+  font-family: var(--font-pixel);
+  font-size: 0.6rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
