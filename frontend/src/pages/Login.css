@@ -22,7 +22,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  padding: 2rem;
+  padding: 0; /* Quita el padding general para que header y footer toquen los bordes */
   box-sizing: border-box;
 }
 
@@ -359,4 +359,40 @@ body {
   font-size: 0.6rem;
   color: var(--text-secondary);
   text-transform: uppercase;
+}
+
+/* --- NUEVOS ESTILOS PARA LA PARTE INFERIOR --- */
+.login-tagline {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  color: var(--text-secondary);
+  margin: 2.5rem auto 3rem auto;
+  text-transform: uppercase;
+}
+
+.login-footer {
+  margin-top: auto;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1.5rem 2.5rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.footer-status {
+  color: var(--accent-color);
 }

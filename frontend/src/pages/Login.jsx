@@ -189,7 +189,7 @@ return (
           </section>
         </div>
 
-        {/* Barra inferior dentro de la caja */}
+{/* Barra inferior dentro de la caja */}
         <div className="box-footer">
            <div className="box-footer-left">
               <span className="highlight-green">■</span> CONEXIÓN SEGURA
@@ -200,10 +200,20 @@ return (
         </div>
       </main>
 
-      {/* Footer inferior (basado en el diseño) */}
+      {/* Frase centrada debajo de la bóveda */}
+      <div className="login-tagline">
+        LOS BUENOS JUEGOS MERECEN UNA PARTIDA GUARDADA.
+      </div>
+
+      {/* Footer inferior de lado a lado */}
       <footer className="login-footer">
-          <span>● SISTEMA EN LÍNEA // LISTO CUANDO TÚ LO ESTÉS</span>
-          <span>PIXELVAULT v1.0 - NO SE PERDIÓ EL PROGRESO.</span>
+        <div className="footer-left">
+          <span className="footer-status">■ SISTEMA EN LÍNEA</span>
+          <span className="footer-sub"> // LISTO CUANDO TÚ LO ESTÉS</span>
+        </div>
+        <div className="footer-right">
+          PIXELVAULT v1.0 &nbsp;·&nbsp; NO SE PERDIÓ EL PROGRESO.
+        </div>
       </footer>
     </div>
   );
