@@ -114,7 +114,13 @@ return (
              <img src={heroImage} alt="Hollow Knight Hero" className="hero-img" />
              
              <div className="hero-overlay">
-                <div className="hearts">❤️❤️❤️</div>
+<div className="hearts">
+  {[1, 2, 3].map((n) => (
+    <svg key={n} width="18" height="16" viewBox="0 0 9 8" fill="#ff79c6">
+      <path d="M1 0h2v1h1v1h1V1h1V0h2v1h1v3H8v1H7v1H6v1H5v1H4V7H3V6H2V5H1V4H0V1h1V0z" />
+    </svg>
+  ))}
+</div>
                 <h2>Cada misión.</h2>
                 <h2>Cada crédito</h2>
                 <h2>final.</h2>
@@ -184,7 +190,7 @@ return (
               </button>
 
               <div className="register-link">
-                 ¿Nuevo jugador? <a href="#">Crea una cuenta ↗</a>
+                 ¿Nuevo jugador? <Link to="/registro">Crea una cuenta ↗</Link>
               </div>
             </form>
           </section>
