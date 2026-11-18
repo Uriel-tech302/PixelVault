@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './Login.css';
 // Asegúrate de importar la imagen correctamente. Ajusta la ruta si es necesario.
+import { Link } from 'react-router-dom';
 import heroImage from '../assets/hollow-knight.jpg'; 
 import pixelLogo from '../assets/pixel-logo.svg';
 import lockIcon from '../assets/candado.svg';
@@ -165,7 +166,7 @@ return (
                    <span className="checkmark"></span>
                    Recuérdame
                  </label>
-                 <a href="#" className="forgot-password">¿Olvidaste tu contraseña?</a>
+                 <Link to="/recuperar" className="forgot-password">¿Olvidaste tu contraseña?</Link>
               </div>
 
               {errors.submit && <div className="submit-error">{errors.submit}</div>}
