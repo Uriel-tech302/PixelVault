@@ -1,0 +1,302 @@
+.inventory-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+}
+
+/* NAVBAR */
+.inventory-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: var(--panel-bg);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.navbar-logo {
+  font-family: var(--font-pixel);
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navbar-search {
+  flex: 1;
+  max-width: 500px;
+  display: flex;
+  align-items: center;
+  background-color: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+}
+
+.navbar-search input {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  width: 100%;
+  font-family: var(--font-mono);
+  outline: none;
+  margin-left: 0.5rem;
+}
+
+.navbar-user-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btn-add-game {
+  background-color: var(--accent-color);
+  color: #000;
+  border: none;
+  padding: 0.6rem 1rem;
+  font-family: var(--font-pixel);
+  font-size: 0.65rem;
+  cursor: pointer;
+  box-shadow: 0 3px 0 #5c8a14;
+}
+
+.profile-btn {
+  background-color: transparent;
+  color: var(--accent-pink);
+  border: 1px solid var(--accent-pink);
+  padding: 0.5rem 0.8rem;
+  font-family: var(--font-pixel);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.user-profile-menu {
+  position: relative;
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background-color: var(--panel-bg);
+  border: 1px solid var(--accent-pink);
+  padding: 0.5rem;
+  z-index: 100;
+}
+
+.logout-link {
+  color: var(--accent-pink);
+  text-decoration: none;
+  font-size: 0.7rem;
+}
+
+/* CONTENIDO PRINCIPAL */
+.inventory-content {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* HEADER & ESTADÍSTICAS */
+.inventory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.player-tag {
+  color: var(--accent-color);
+  font-size: 0.7rem;
+}
+
+.inventory-title {
+  font-family: var(--font-pixel);
+  font-size: 2rem;
+  margin: 1rem 0 0.5rem 0;
+}
+
+.inventory-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.header-stats {
+  display: flex;
+  gap: 1.5rem;
+  border: 1px solid var(--border-color);
+  padding: 1.5rem;
+  background-color: rgba(255,255,255,0.02);
+}
+
+.stat-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.highlight-orange { color: #ffb86c; } /* Color para las estadísticas */
+
+/* TABS */
+.inventory-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.tab-btn {
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  padding: 0.8rem 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.tab-btn.active {
+  background-color: var(--accent-color);
+  color: #000;
+  border-color: var(--accent-color);
+  font-weight: bold;
+}
+
+.tab-count { opacity: 0.5; margin-left: 0.5rem; font-size: 0.7rem; }
+
+/* TOOLBAR */
+.inventory-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.toolbar-right { display: flex; align-items: center; gap: 1rem; }
+.grid-toggle-btn {
+  background-color: transparent;
+  color: var(--accent-color);
+  border: 1px solid var(--accent-color);
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+}
+
+/* GRILLA DE JUEGOS */
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.game-card {
+  background-color: #11151c;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s;
+}
+
+.game-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--text-secondary);
+}
+
+.game-card.card-active {
+  border: 2px solid var(--accent-color);
+}
+
+.game-image-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+}
+
+.game-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.game-status-badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 0.6rem;
+  padding: 0.3rem 0.5rem;
+  font-weight: bold;
+  color: #000;
+}
+
+.status-completado { background-color: var(--accent-pink); }
+.status-jugando { background-color: var(--accent-color); }
+.status-abandonado { background-color: var(--text-secondary); color: #fff; }
+
+.edit-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--accent-color);
+  color: #000;
+  font-size: 0.65rem;
+  padding: 0.5rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+.game-info {
+  padding: 1rem;
+}
+
+.game-title {
+  margin: 0 0 0.3rem 0;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.game-meta {
+  margin: 0 0 1rem 0;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.game-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.game-hearts { color: var(--accent-pink); font-size: 0.8rem; }
+.game-hours { font-size: 0.7rem; color: var(--text-secondary); }
+
+/* FOOTER NOTAS */
+.inventory-footer-note {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1rem;
+}
+
+.inventory-main-footer {
+  border-top: 2px solid var(--border-color);
+  padding: 1.5rem 2.5rem;
+  margin-top: auto;
+}
