@@ -1,0 +1,357 @@
+.detail-main {
+  width: calc(100% - 4rem);
+  max-width: 1100px;
+  margin: 1.5rem auto 2rem auto;
+}
+
+.detail-breadcrumb {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 0.72rem;
+}
+
+.back-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.back-link:hover {
+  color: var(--accent-color);
+}
+
+.detail-player-tag {
+  color: var(--accent-color);
+}
+
+/* TARJETA PRINCIPAL */
+.save-point-card {
+  background-color: var(--panel-bg);
+  border: 2px solid var(--border-color);
+  box-shadow: 8px 8px 0px #05070a;
+}
+
+/* BANNER HERO */
+.detail-hero-banner {
+  position: relative;
+  min-height: 190px;
+  background-size: cover;
+  background-position: center;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.detail-hero-overlay {
+  min-height: 190px;
+  padding: 1.8rem 2rem;
+  box-sizing: border-box;
+  background: linear-gradient(90deg, rgba(11, 14, 20, 0.92) 0%, rgba(11, 14, 20, 0.55) 60%, rgba(11, 14, 20, 0.85) 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.editing-tag {
+  display: block;
+  color: var(--accent-color);
+  font-size: 0.68rem;
+  margin-bottom: 0.6rem;
+}
+
+.detail-game-title {
+  font-family: var(--font-pixel);
+  font-size: 1.7rem;
+  margin: 0 0 0.7rem 0;
+  color: #fff;
+}
+
+.detail-game-meta {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.platform-badge {
+  border: 1px solid var(--border-color);
+  background-color: rgba(11, 14, 20, 0.85);
+  padding: 0.45rem 0.9rem;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+/* CUERPO 2 COLUMNAS */
+.detail-body {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 2.5rem;
+  padding: 2rem;
+}
+
+/* SIDEBAR IZQUIERDO */
+.detail-cover-img {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+  margin-bottom: 1.5rem;
+}
+
+.mission-log-title {
+  font-family: var(--font-pixel);
+  font-size: 0.65rem;
+  color: #ffb86c;
+  margin: 0 0 1rem 0;
+  line-height: 1.5;
+}
+
+.mission-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.mission-label {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+}
+
+.mission-value {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+.story-note-box {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.story-note-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.68rem;
+  color: var(--accent-color);
+  font-weight: bold;
+}
+
+.story-note-desc {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* EDITOR DERECHO */
+.editor-top-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.editor-label {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.8rem;
+}
+
+.interactive-hearts {
+  display: flex;
+  gap: 0.45rem;
+  margin-bottom: 0.7rem;
+}
+
+.heart-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.heart-btn:hover {
+  transform: scale(1.15);
+}
+
+.rating-caption {
+  font-size: 0.72rem;
+  color: var(--accent-pink);
+}
+
+.status-select {
+  width: 100%;
+  background-color: #0e1218;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 0.8rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  outline: none;
+  cursor: pointer;
+  margin-bottom: 0.6rem;
+}
+
+.status-select:focus {
+  border-color: var(--accent-color);
+}
+
+.status-caption {
+  display: block;
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* TERMINAL DE RESEÑA */
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.review-header .editor-label {
+  margin-bottom: 0;
+}
+
+.draft-indicator {
+  font-size: 0.68rem;
+  color: var(--accent-color);
+}
+
+.terminal-editor-box {
+  background-color: #0b0e14;
+  border: 1px solid var(--accent-color);
+  padding: 1.25rem;
+}
+
+.terminal-prompt {
+  font-size: 0.75rem;
+  color: var(--accent-color);
+  margin-bottom: 1rem;
+}
+
+.terminal-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+}
+
+.terminal-cursor-line {
+  margin-top: 0.5rem;
+  color: var(--accent-color);
+  font-size: 0.85rem;
+}
+
+.blinking-block {
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.review-meta-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  margin-top: 0.6rem;
+}
+
+.save-success-banner {
+  margin-top: 1.2rem;
+  padding: 0.8rem 1rem;
+  background-color: rgba(176, 251, 61, 0.08);
+  border: 1px solid var(--accent-color);
+  color: var(--accent-color);
+  font-size: 0.78rem;
+}
+
+/* FOOTER DE LA TARJETA */
+.detail-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.4rem 2rem;
+  border-top: 2px solid var(--border-color);
+  background-color: #12161f;
+}
+
+.footer-save-info {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.save-info-title {
+  margin: 0 0 0.2rem 0;
+  font-size: 0.8rem;
+  color: var(--text-primary);
+}
+
+.save-info-sub {
+  margin: 0;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.footer-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-cancel {
+  background-color: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 0.85rem 1.5rem;
+  font-family: var(--font-pixel);
+  font-size: 0.65rem;
+  cursor: pointer;
+}
+
+.btn-cancel:hover {
+  border-color: var(--text-secondary);
+}
+
+.btn-save-data {
+  background-color: var(--accent-color);
+  color: #000;
+  border: none;
+  padding: 0.85rem 1.6rem;
+  font-family: var(--font-pixel);
+  font-size: 0.65rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #5c8a14;
+}
+
+.btn-save-data:hover:not(:disabled) {
+  background-color: #beff54;
+}
+
+/* RESPONSIVO PARA MÓVIL */
+@media (max-width: 850px) {
+  .detail-body {
+    grid-template-columns: 1fr;
+  }
+  .editor-top-row {
+    grid-template-columns: 1fr;
+  }
+  .detail-card-footer {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+}
