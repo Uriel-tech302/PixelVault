@@ -3,7 +3,7 @@ import Login from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
 import Register from './pages/Register';
 import Inventory from './pages/Inventory'; // <-- IMPORTA ESTO
-
+import GameDetail from './pages/GameDetail';
 function App() {
   return (
     <BrowserRouter>
@@ -13,6 +13,7 @@ function App() {
         <Route path="/recuperar" element={<ForgotPassword />} />
         <Route path="/registro" element={<Register />} />
         <Route path="/inventario" element={<Inventory />} /> {/* <-- NUEVA RUTA */}
+        <Route path="/juego/:id" element={<GameDetail />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Inventory.css';
 import pixelLogo from '../assets/pixel-logo.svg';
 
 export default function Inventory() {
+  const navigate = useNavigate();
+
   // Datos simulados (Mock) que después vendrán de tu API/Steam
   const mockGames = [
     { id: 1, title: 'Hollow Knight', year: '2017', genre: 'Metroidvania', status: 'COMPLETADO', hours: '48.2 h', hearts: 3, image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/367520/library_600x900.jpg' },
@@ -105,7 +107,12 @@ export default function Inventory() {
         {/* GRILLA DE JUEGOS */}
         <div className="games-grid">
           {mockGames.map(game => (
-            <div className={`game-card ${game.id === 1 ? 'card-active' : ''}`} key={game.id}>
+            <div
+              className={`game-card ${game.id === 1 ? 'card-active' : ''}`}
+              key={game.id}
+              onClick={() => navigate(`/juego/${game.id}`)}
+              style={{ cursor: 'pointer' }}
+            >
               <div className="game-image-container">
                 <span className={`game-status-badge status-${game.status.toLowerCase()}`}>
                   {game.status}
