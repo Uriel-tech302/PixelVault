@@ -4,6 +4,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import Register from './pages/Register';
 import Inventory from './pages/Inventory'; // <-- IMPORTA ESTO
 import GameDetail from './pages/GameDetail';
+import AddGame from './pages/AddGame';
 function App() {
   return (
     <BrowserRouter>
@@ -14,6 +15,7 @@ function App() {
         <Route path="/registro" element={<Register />} />
         <Route path="/inventario" element={<Inventory />} /> {/* <-- NUEVA RUTA */}
         <Route path="/juego/:id" element={<GameDetail />} />
+        <Route path="/agregar" element={<AddGame />} />
       </Routes>
     </BrowserRouter>
   );

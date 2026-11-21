@@ -141,10 +141,14 @@ export default function GameDetail() {
           <input type="text" placeholder="Buscar en tu colección... /" />
         </div>
 
-        <div className="navbar-user-controls">
-          <button className="btn-add-game" type="button">
+         <div className="navbar-user-controls">
+           <button
+             className="btn-add-game"
+             type="button"
+             onClick={() => navigate('/agregar')}
+          >
             <span className="btn-add-icon">⭘</span> + Agregar juego
-          </button>
+            </button>
 
           <div className="user-profile-menu">
             <button
