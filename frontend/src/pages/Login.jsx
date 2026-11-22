@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import './Login.css';
+import { useAuth } from '../context/AuthContext';
 // Asegúrate de importar la imagen correctamente. Ajusta la ruta si es necesario.
 import heroImage from '../assets/hollow-knight.jpg';
 import pixelLogo from '../assets/pixel-logo.svg';
 import lockIcon from '../assets/candado.svg';
 import { Link, useNavigate } from 'react-router-dom';
 export default function Login() {
+  const { login } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
@@ -56,6 +58,16 @@ export default function Login() {
         await new Promise(resolve => setTimeout(resolve, 1500));
 
         console.log("Login exitoso");
+        const isAdmin = formData.email.toLowerCase().includes('admin');
+          login(
+          {
+            name: isAdmin ? 'Administrador' : 'Jugador_01',
+            email: formData.email,
+            role: isAdmin ? 'ADMIN' : 'USER',
+            avatar: isAdmin ? 'AD' : 'P1'
+      },
+            'token-jwt-simulado'
+        );           ;
         navigate('/inventario'); // <-- REDIRECCIÓN AQUÍ
       } catch (error) {
         setErrors({ submit: 'Error al iniciar sesión. Verifica tus datos.' });
