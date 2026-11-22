@@ -12,10 +12,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-/**
- * Crea al arrancar los usuarios de prueba (admin, moderador y usuario) si no existen.
- * Las contrasenas vienen de variables de entorno; si una esta vacia, ese usuario no se crea.
- */
 @Component
 public class DataSeeder implements ApplicationRunner {
 

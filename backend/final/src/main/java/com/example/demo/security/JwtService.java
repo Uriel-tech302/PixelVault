@@ -25,7 +25,6 @@ public class JwtService {
     public JwtService(@Value("${app.jwt.secret}") String secret,
                       @Value("${app.jwt.expiration-ms}") long expiracionMs,
                       @Value("${app.jwt.remember-expiration-ms}") long expiracionRecordarmeMs) {
-        // La clave es Base64 y debe decodificar a 32 bytes o mas (HS256)
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
         this.expiracionMs = expiracionMs;
         this.expiracionRecordarmeMs = expiracionRecordarmeMs;
@@ -49,7 +48,6 @@ public class JwtService {
         return new TokenGenerado(token, jti, expira);
     }
 
-    /** Valida firma y expiracion. Lanza JwtException si el token no es valido. */
     public Claims parsear(String token) {
         return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
     }

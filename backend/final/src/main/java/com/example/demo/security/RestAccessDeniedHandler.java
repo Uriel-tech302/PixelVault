@@ -6,7 +6,6 @@ import java.io.IOException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
-/** 403: el usuario esta autenticado pero su rol no tiene permiso. */
 public class RestAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override

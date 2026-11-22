@@ -17,12 +17,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-/**
- * Lee "Authorization: Bearer <token>", valida el JWT y, si es correcto, deja al usuario autenticado.
- * Si el token falta o es invalido no hace nada: Spring Security responde 401 despues.
- * (No es un @Component a proposito: se crea en SecurityConfig para que no se registre dos veces.)
- */
-
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
@@ -63,7 +57,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             });
                 }
             } catch (JwtException | IllegalArgumentException e) {
-                // Token invalido o vencido: se ignora y la peticion sigue sin autenticar (401)
             }
         }
 

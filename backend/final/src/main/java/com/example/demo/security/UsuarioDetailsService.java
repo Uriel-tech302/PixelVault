@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** Carga el usuario por correo para el login (lo usa el AuthenticationManager). */
 @Service
 public class UsuarioDetailsService implements UserDetailsService {
 
