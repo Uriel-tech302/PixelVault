@@ -300,3 +300,109 @@
   padding: 1.5rem 2.5rem;
   margin-top: auto;
 }
+/* DETALLES DEL DROPDOWN DE USUARIO */
+.dropdown-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  min-width: 200px;
+}
+
+.dropdown-user-name {
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  font-weight: bold;
+}
+
+.dropdown-user-email {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+
+.dropdown-user-role {
+  font-size: 0.65rem;
+  color: var(--accent-color);
+  margin-top: 0.2rem;
+}
+
+.dropdown-item-link {
+  display: block;
+  padding: 0.7rem 1rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dropdown-item-link:hover {
+  background-color: rgba(176, 251, 61, 0.08);
+  color: var(--accent-color);
+}
+
+.logout-btn-reset {
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+/* LOADING, ERROR Y PAGINACIÓN */
+.inventory-loading-box,
+.inventory-empty-box,
+.inventory-error-box {
+  padding: 2.5rem;
+  text-align: center;
+  border: 1px solid var(--border-color);
+  background-color: var(--panel-bg);
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.inventory-loading-box {
+  color: var(--accent-color);
+  font-family: var(--font-pixel);
+  font-size: 0.75rem;
+}
+
+.inventory-error-box {
+  border-color: var(--accent-pink);
+  color: var(--accent-pink);
+}
+
+.pagination-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.page-btn {
+  background-color: var(--panel-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 0.65rem 1.2rem;
+  font-family: var(--font-pixel);
+  font-size: 0.65rem;
+  cursor: pointer;
+}
+
+.page-btn:hover:not(:disabled) {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.page-indicator {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
