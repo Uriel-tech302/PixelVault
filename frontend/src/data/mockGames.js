@@ -1,0 +1,78 @@
+export const mockGames = [
+  {
+    id: 1,
+    title: 'Hollow Knight',
+    year: '2017',
+    genre: 'Metroidvania',
+    developer: 'Team Cherry',
+    status: 'COMPLETADO',
+    hours: '48.2 h',
+    lastSession: '21 oct 2026',
+    platform: 'Steam / PC',
+    hearts: 5,
+    image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/367520/library_600x900.jpg',
+    banner: 'https://cdn.cloudflare.steamstatic.com/steam/apps/367520/library_hero.jpg',
+    review:
+      'Vine por el arte. Me quedé por la sensación de perderme por completo, maravillosamente, bajo Dirtmouth.\n\nCada nuevo atajo se sentía como una pequeña victoria, y la Ciudad de Lágrimas seguirá en mi mente durante mucho tiempo. El mundo dice tanto sin decir demasiado.\n\n48 horas después: un aguijón roto, cien muertes y un nuevo favorito de todos los tiempos. Hallownest, gracias.'
+  },
+  {
+    id: 2,
+    title: 'Stardew Valley',
+    year: '2016',
+    genre: 'Simulador de granja',
+    developer: 'ConcernedApe',
+    status: 'JUGANDO',
+    hours: '126.4 h',
+    lastSession: '15 nov 2026',
+    platform: 'Steam / PC',
+    hearts: 5,
+    image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/413150/library_600x900.jpg',
+    banner: 'https://cdn.cloudflare.steamstatic.com/steam/apps/413150/library_hero.jpg',
+    review: 'Solo un día más en la granja... y ya pasaron 4 horas.'
+  },
+  {
+    id: 3,
+    title: 'Hades',
+    year: '2020',
+    genre: 'Roguelike',
+    developer: 'Supergiant Games',
+    status: 'JUGANDO',
+    hours: '32.8 h',
+    lastSession: '10 nov 2026',
+    platform: 'Steam / PC',
+    hearts: 4,
+    image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/1145360/library_600x900.jpg',
+    banner: 'https://cdn.cloudflare.steamstatic.com/steam/apps/1145360/library_hero.jpg',
+    review: 'Arte, música y combate impecables.'
+  },
+  {
+    id: 4,
+    title: 'Celeste',
+    year: '2018',
+    genre: 'Plataformas',
+    developer: 'Maddy Makes Games',
+    status: 'COMPLETADO',
+    hours: '10.6 h',
+    lastSession: '02 oct 2026',
+    platform: 'Steam / PC',
+    hearts: 5,
+    image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/504230/library_600x900.jpg',
+    banner: 'https://cdn.cloudflare.steamstatic.com/steam/apps/504230/library_hero.jpg',
+    review: 'Difícil pero súper justo. Gran mensaje.'
+  },
+  {
+    id: 5,
+    title: 'Dead Cells',
+    year: '2018',
+    genre: 'Roguelike',
+    developer: 'Motion Twin',
+    status: 'ABANDONADO',
+    hours: '14.1 h',
+    lastSession: '19 sep 2026',
+    platform: 'Steam / PC',
+    hearts: 3,
+    image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/588650/library_600x900.jpg',
+    banner: 'https://cdn.cloudflare.steamstatic.com/steam/apps/588650/library_hero.jpg',
+    review: 'Muy bueno, pero lo dejé en pausa por falta de tiempo.'
+  }
+];
