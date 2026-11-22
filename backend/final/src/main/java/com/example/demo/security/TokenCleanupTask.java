@@ -7,7 +7,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-/** Borra cada noche los tokens revocados que ya vencieron (ya no hace falta recordarlos). */
 @Component
 public class TokenCleanupTask {
 

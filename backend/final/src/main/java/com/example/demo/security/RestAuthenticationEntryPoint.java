@@ -6,7 +6,6 @@ import java.io.IOException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
-/** 401: la peticion llego sin token, o con un token invalido, vencido o revocado. */
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override

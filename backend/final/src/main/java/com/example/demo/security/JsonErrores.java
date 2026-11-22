@@ -3,7 +3,6 @@ package com.example.demo.security;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/** Escribe errores JSON con el mismo formato que GlobalExceptionHandler (para los filtros de seguridad). */
 final class JsonErrores {
 
     private JsonErrores() {
