@@ -1,5 +1,6 @@
 package com.example.demo.config;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import com.example.demo.repository.TokenRevocadoRepository;
 import com.example.demo.repository.UsuarioRepository;
 import com.example.demo.security.JwtAuthenticationFilter;
@@ -38,7 +39,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, CorsConfigurationSource corsSource) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, @Qualifier("corsConfigurationSource") CorsConfigurationSource corsSource) throws Exception {
         JwtAuthenticationFilter jwtFilter =
                 new JwtAuthenticationFilter(jwtService, usuarioRepository, tokenRevocadoRepository);
 
