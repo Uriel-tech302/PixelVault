@@ -1,18 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import './Inventory.css';
 import './GameDetail.css';
 import './AddGame.css';
-
-const ratingLabels = {
-  0: 'SIN VALORAR',
-  1: '1 / 5 — NO FUE PARA MÍ',
-  2: '2 / 5 — PASABLE',
-  3: '3 / 5 — BUEN JUEGO',
-  4: '4 / 5 — GRAN EXPERIENCIA',
-  5: '5 / 5 — OBRA MAESTRA'
-};
-
+import HeartRating, { ratingLabels } from '../components/HeartRating';
 export default function AddGame() {
   const navigate = useNavigate();
 
@@ -32,7 +25,6 @@ export default function AddGame() {
   const [coverError, setCoverError] = useState('');
   const [errors, setErrors] = useState({});
   const [isSaving, setIsSaving] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -104,7 +96,6 @@ export default function AddGame() {
       setIsSaving(true);
       try {
         console.log('Nuevo juego a guardar:', { ...formData, hasCover: !!coverPreview });
-        // Aquí conectarás Axios: POST /api/inventario
         await new Promise((resolve) => setTimeout(resolve, 1000));
         navigate('/inventario');
       } finally {
@@ -115,36 +106,8 @@ export default function AddGame() {
 
   return (
     <div className="inventory-wrapper">
-      {/* NAVBAR SUPERIOR */}
-      <nav className="inventory-navbar">
-        <Link to="/inventario" className="navbar-logo" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <span className="logo-icon">▣</span> PixelVault
-        </Link>
+      <Navbar showAddButton={false} />
 
-        <div className="navbar-search">
-          <span className="search-icon">🔍</span>
-          <input type="text" placeholder="Buscar en tu colección... /" />
-        </div>
-
-        <div className="navbar-user-controls">
-          <div className="user-profile-menu">
-            <button
-              className="profile-btn"
-              type="button"
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-            >
-              P1
-            </button>
-            {dropdownOpen && (
-              <div className="profile-dropdown">
-                <Link to="/login" className="logout-link">Cerrar sesión ▼</Link>
-              </div>
-            )}
-          </div>
-        </div>
-      </nav>
-
-      {/* CONTENIDO PRINCIPAL */}
       <main className="detail-main">
         <div className="detail-breadcrumb">
           <Link to="/inventario" className="back-link">← VOLVER AL INVENTARIO</Link>
@@ -152,7 +115,6 @@ export default function AddGame() {
         </div>
 
         <form className="save-point-card" onSubmit={handleSubmit} noValidate>
-          {/* Header superior de la caja */}
           <div className="box-header">
             <div className="box-header-left">
               <span className="highlight-green">💾</span> Nueva partida en tu bóveda
@@ -162,7 +124,6 @@ export default function AddGame() {
             </div>
           </div>
 
-          {/* Encabezado del título */}
           <div className="add-game-header">
             <div>
               <h1 className="detail-game-title">Agregar juego</h1>
@@ -173,9 +134,7 @@ export default function AddGame() {
             <span className="required-legend">* CAMPOS OBLIGATORIOS</span>
           </div>
 
-          {/* Cuerpo en 2 columnas */}
           <div className="detail-body">
-            {/* Columna Izquierda: Portada */}
             <aside className="detail-sidebar">
               <span className="editor-label">PORTADA / OPCIONAL</span>
 
@@ -217,9 +176,7 @@ export default function AddGame() {
               </div>
             </aside>
 
-            {/* Columna Derecha: Formulario */}
             <section className="detail-editor">
-              {/* SECCIÓN 01 */}
               <div className="form-section-header">
                 <span className="section-title-green">01 / DATOS DEL JUEGO</span>
                 <span className="section-subtitle-muted">EL INICIO DE LA AVENTURA</span>
@@ -311,7 +268,6 @@ export default function AddGame() {
                 </div>
               </div>
 
-              {/* SECCIÓN 02 */}
               <div className="form-section-header section-spacer">
                 <span className="section-title-green">02 / TU PARTIDA</span>
                 <span className="section-subtitle-muted">CADA MISIÓN CUENTA</span>
@@ -355,31 +311,11 @@ export default function AddGame() {
               <div className="add-rating-row">
                 <div>
                   <label className="editor-label">TU PUNTUACIÓN / OPCIONAL</label>
-                  <div className="interactive-hearts">
-                    {[1, 2, 3, 4, 5].map((num) => (
-                      <button
-                        key={num}
-                        type="button"
-                        className="heart-btn"
-                        onClick={() =>
-                          setFormData({
-                            ...formData,
-                            rating: formData.rating === num ? 0 : num
-                          })
-                        }
-                        aria-label={`Calificar con ${num} corazones`}
-                      >
-                        <svg
-                          width="24"
-                          height="22"
-                          viewBox="0 0 9 8"
-                          fill={num <= formData.rating ? '#ff79c6' : '#30363d'}
-                        >
-                          <path d="M1 0h2v1h1v1h1V1h1V0h2v1h1v3H8v1H7v1H6v1H5v1H4V7H3V6H2V5H1V4H0V1h1V0z" />
-                        </svg>
-                      </button>
-                    ))}
-                  </div>
+                    <HeartRating
+                    rating={formData.rating}
+                    onChange={(val) => setFormData({ ...formData, rating: val })}
+                    allowClear={true}
+                  />
                 </div>
 
                 <div className="rating-right-info">
@@ -388,7 +324,6 @@ export default function AddGame() {
                 </div>
               </div>
 
-              {/* SECCIÓN 03 */}
               <div className="form-section-header section-spacer">
                 <span className="section-title-green">03 / RESEÑA PERSONAL</span>
                 <span className="section-subtitle-muted">OPCIONAL</span>
@@ -419,7 +354,6 @@ export default function AddGame() {
             </section>
           </div>
 
-          {/* Footer de la tarjeta */}
           <div className="detail-card-footer">
             <div className="footer-save-info">
               <span className="save-icon">💾</span>
@@ -449,14 +383,7 @@ export default function AddGame() {
         </div>
       </main>
 
-      <footer className="login-footer inventory-main-footer">
-        <div className="footer-left">
-          <span className="highlight-green">■</span> CONEXIÓN STEAM ESTABLECIDA // ÚLTIMA SINCRONIZACIÓN: HACE 2 MIN
-        </div>
-        <div className="footer-right">
-          PIXELVAULT v1.0 &nbsp;·&nbsp; NO SE PERDIÓ NINGÚN PROGRESO.
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
