@@ -406,3 +406,75 @@
   font-size: 0.75rem;
   color: var(--text-secondary);
 }
+/* AJUSTES RESPONSIVOS PARA MÓVIL */
+@media (max-width: 768px) {
+  .inventory-wrapper {
+    overflow-x: hidden;
+  }
+
+  /* Navbar en 2 filas limpias: arriba logo/botones, abajo buscador completo */
+  .inventory-navbar {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0.9rem 1rem;
+  }
+
+  .navbar-logo {
+    font-size: 0.9rem;
+  }
+
+  .navbar-search {
+    order: 3;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .navbar-user-controls {
+    margin-left: auto;
+    gap: 0.5rem;
+  }
+
+  .btn-add-game {
+    padding: 0.5rem 0.7rem;
+    font-size: 0.6rem;
+    white-space: nowrap;
+  }
+
+  /* Header del inventario apilado */
+  .inventory-content,
+  .detail-main {
+    padding: 1.2rem 1rem;
+  }
+
+  .inventory-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.2rem;
+  }
+
+  .header-stats {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  /* Pestañas de filtro sin aplastarse */
+  .inventory-tabs {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tab-btn {
+    flex: 1 1 45%;
+    text-align: center;
+  }
+
+  /* Footer apilado */
+  .inventory-main-footer,
+  .inventory-footer-note {
+    flex-direction: column;
+    gap: 0.6rem;
+    text-align: center;
+    padding: 1rem;
+  }
+}
