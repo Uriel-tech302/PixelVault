@@ -1,9 +1,16 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
-export default function Navbar({ showAddButton = true }) {
+export default function Navbar({ showAddButton = true, searchTerm = '', onSearchChange }) {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <nav className="inventory-navbar">
@@ -17,7 +24,12 @@ export default function Navbar({ showAddButton = true }) {
 
       <div className="navbar-search">
         <span className="search-icon">🔍</span>
-        <input type="text" placeholder="Buscar en tu colección... /" />
+        <input
+          type="text"
+          placeholder="Buscar en tu colección... /"
+          value={searchTerm}
+          onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
+        />
       </div>
 
       <div className="navbar-user-controls">
@@ -36,14 +48,34 @@ export default function Navbar({ showAddButton = true }) {
             className="profile-btn"
             type="button"
             onClick={() => setDropdownOpen(!dropdownOpen)}
+            title={user?.email}
           >
-            P1
+            {user?.avatar || 'P1'}
           </button>
+
           {dropdownOpen && (
             <div className="profile-dropdown">
-              <Link to="/login" className="logout-link">
-                Cerrar sesión ▼
+              <div className="dropdown-user-info">
+                <span className="dropdown-user-name">{user?.name || 'Jugador'}</span>
+                <span className="dropdown-user-email">{user?.email || 'sin@correo.com'}</span>
+                <span className="dropdown-user-role">ROL: {user?.role || 'USER'}</span>
+              </div>
+
+              <Link
+                to="/perfil"
+                className="dropdown-item-link"
+                onClick={() => setDropdownOpen(false)}
+              >
+                ▣ Mi perfil
               </Link>
+
+              <button
+                type="button"
+                className="logout-link logout-btn-reset"
+                onClick={handleLogout}
+              >
+                Cerrar sesión ▼
+              </button>
             </div>
           )}
         </div>

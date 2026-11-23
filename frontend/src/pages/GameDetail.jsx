@@ -6,7 +6,7 @@ import { mockGames } from '../data/mockGames';
 import './Inventory.css';
 import './GameDetail.css';
 import HeartRating, { ratingLabels } from '../components/HeartRating';
-
+import ConfirmModal from '../components/ConfirmModal';
 const statusMessages = {
   Completado: 'MISIÓN COMPLETADA. RECUERDOS GUARDADOS.',
   Jugando: 'PARTIDA EN CURSO. SIGUE AVANZANDO.',
@@ -26,12 +26,13 @@ export default function GameDetail() {
   const [status, setStatus] = useState(formatStatus(game.status));
   const [review, setReview] = useState(game.review);
   const [isSaving, setIsSaving] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [savedNotice, setSavedNotice] = useState(false);
-
   const fileSlug = game.title.toLowerCase().replace(/\s+/g, '_') + '.txt';
   const entryNumber = String(game.id).padStart(3, '0');
 
-  const handleSave = async (e) => {
+const handleSave = async (e) => {
     e.preventDefault();
     setIsSaving(true);
     setSavedNotice(false);
@@ -42,6 +43,18 @@ export default function GameDetail() {
       setSavedNotice(true);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      // Aquí conectarás Axios: await api.delete(`/juegos/${game.id}`);
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      setShowDeleteModal(false);
+      navigate('/inventario');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -182,6 +195,14 @@ export default function GameDetail() {
             <div className="footer-actions">
               <button
                 type="button"
+                className="btn-danger"
+                onClick={() => setShowDeleteModal(true)}
+             >
+                Eliminar
+              </button>
+
+              <button
+                type="button"
                 className="btn-cancel"
                 onClick={() => navigate('/inventario')}
               >
@@ -198,7 +219,17 @@ export default function GameDetail() {
           LOS BUENOS JUEGOS MERECEN UNA PARTIDA GUARDADA.
         </div>
       </main>
-
+        <ConfirmModal
+          isOpen={showDeleteModal}
+          title="ELIMINAR DE LA BÓVEDA"
+          message={`¿Seguro que quieres eliminar "${game.title}" de tu inventario? Se perderá tu puntuación y reseña personal.`}
+          confirmText="Sí, eliminar"
+          cancelText="Cancelar"
+          isDanger={true}
+          isLoading={isDeleting}
+          onConfirm={handleDelete}
+          onCancel={() => setShowDeleteModal(false)}
+        />
       <Footer />
     </div>
   );

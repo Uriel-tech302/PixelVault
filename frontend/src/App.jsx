@@ -1,24 +1,60 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+
 import Login from './pages/Login';
-import ForgotPassword from './pages/ForgotPassword';
 import Register from './pages/Register';
-import Inventory from './pages/Inventory'; // <-- IMPORTA ESTO
+import ForgotPassword from './pages/ForgotPassword';
+import Inventory from './pages/Inventory';
 import GameDetail from './pages/GameDetail';
 import AddGame from './pages/AddGame';
-function App() {
+import Profile from './pages/Profile';
+export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/recuperar" element={<ForgotPassword />} />
-        <Route path="/registro" element={<Register />} />
-        <Route path="/inventario" element={<Inventory />} /> {/* <-- NUEVA RUTA */}
-        <Route path="/juego/:id" element={<GameDetail />} />
-        <Route path="/agregar" element={<AddGame />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Rutas públicas */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/registro" element={<Register />} />
+          <Route path="/recuperar" element={<ForgotPassword />} />
+
+          {/* Rutas protegidas */}
+          <Route
+            path="/inventario"
+            element={
+              <ProtectedRoute>
+                <Inventory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/juego/:id"
+            element={
+              <ProtectedRoute>
+                <GameDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/agregar"
+            element={
+              <ProtectedRoute>
+                <AddGame />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/perfil"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+           }
+          />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
-
-export default App;
