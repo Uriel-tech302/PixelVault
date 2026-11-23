@@ -20,13 +20,18 @@ api.interceptors.request.use(
 );
 
 // Interceptor: si el backend responde 401 (token inválido o expirado), limpia sesión
+// EXCEPTO si el 401 viene del propio /auth/login (para mostrar el mensaje de error sin recargar)
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
+    const isLoginRequest = error.config?.url?.includes('/auth/login');
+
+    if (error.response && error.response.status === 401 && !isLoginRequest) {
       localStorage.removeItem('pixelvault_token');
       localStorage.removeItem('pixelvault_user');
-      window.location.href = '/login';
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

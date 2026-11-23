@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import './Login.css';
 import heroImage from '../assets/hollow-knight.jpg';
 import lockIcon from '../assets/candado.svg';
+import { registerApi } from '../services/authService';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -74,12 +75,18 @@ export default function Register() {
     if (validateForm()) {
       setIsLoading(true);
       try {
-        console.log('Datos de registro:', formData);
-        // Aquí conectarás Axios (POST /api/auth/register)
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        console.log('Registro exitoso');
-      } catch (err) {
-        setErrors({ submit: 'No se pudo crear la cuenta. Intenta con otro correo.' });
+        await registerApi({
+          username: formData.username, // asegúrate que coincida con el nombre de tu estado
+          email: formData.email,
+          password: formData.password
+        });
+        navigate('/login');
+      } catch (error) {
+        const backendMsg =
+          error.response?.data?.mensaje ||
+          error.response?.data?.message ||
+          'No se pudo completar el registro. Verifica tus datos.';
+        setErrors({ submit: backendMsg });
       } finally {
         setIsLoading(false);
       }

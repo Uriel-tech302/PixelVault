@@ -6,6 +6,8 @@ import heroImage from '../assets/hollow-knight.jpg';
 import pixelLogo from '../assets/pixel-logo.svg';
 import lockIcon from '../assets/candado.svg';
 import { Link, useNavigate } from 'react-router-dom';
+import { loginApi } from '../services/authService';
+
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -52,31 +54,21 @@ export default function Login() {
 
     if (validateForm()) {
       setIsLoading(true);
-      try {
-        console.log("Datos a enviar:", formData);
-        // Simulación del backend
-        await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+        const { token, user } = await loginApi({
+          email: formData.email,
+          password: formData.password,
+          recordarme: Boolean(formData.rememberMe)
+        });
 
-        console.log("Login exitoso");
-  const emailLower = formData.email.toLowerCase();
-        let role = 'USER';
-        let name = 'Jugador_01';
-        let avatar = 'P1';
-
-        if (emailLower.includes('admin')) {
-          role = 'ADMIN';
-          name = 'Administrador';
-          avatar = 'AD';
-        } else if (emailLower.includes('mod')) {
-          role = 'MODERATOR';
-          name = 'Moderador_01';
-          avatar = 'MD';
-        }
-
-        login({ name, email: formData.email, role, avatar }, 'token-jwt-simulado');
-        navigate(role === 'ADMIN' ? '/admin' : '/inventario');
+        login(user, token);
+        navigate(user.role === 'ADMIN' ? '/admin' : '/inventario');
       } catch (error) {
-        setErrors({ submit: 'Error al iniciar sesión. Verifica tus datos.' });
+        const backendMsg =
+          error.response?.data?.mensaje ||
+          error.response?.data?.message ||
+          'Correo o contraseña incorrectos.';
+        setErrors({ submit: backendMsg });
       } finally {
         setIsLoading(false);
       }

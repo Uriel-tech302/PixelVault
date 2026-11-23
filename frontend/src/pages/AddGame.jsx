@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -6,82 +6,89 @@ import './Inventory.css';
 import './GameDetail.css';
 import './AddGame.css';
 import HeartRating, { ratingLabels } from '../components/HeartRating';
+import {
+  getCatalogoJuegos,
+  getPlataformas,
+  addGameToLibrary
+} from '../services/gameService';
+
 export default function AddGame() {
   const navigate = useNavigate();
 
+  const [juegos, setJuegos] = useState([]);
+  const [plataformas, setPlataformas] = useState([]);
+  const [isLoadingCatalogs, setIsLoadingCatalogs] = useState(true);
+  const [catalogError, setCatalogError] = useState('');
+
   const [formData, setFormData] = useState({
-    title: '',
-    platform: '',
-    year: '',
-    genre: '',
-    developer: '',
-    status: 'Pendiente',
-    hours: '',
-    rating: 0,
-    review: ''
+    juegoId: '',
+    plataformaId: '',
+    status: 'Jugando',
+    hours: '0',
+    lastSession: '',
+    rating: 0
   });
 
-  const [coverPreview, setCoverPreview] = useState(null);
-  const [coverError, setCoverError] = useState('');
   const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadCatalogs = async () => {
+      setIsLoadingCatalogs(true);
+      setCatalogError('');
+      try {
+        const [juegosData, plataformasData] = await Promise.all([
+          getCatalogoJuegos(),
+          getPlataformas()
+        ]);
+        if (!active) return;
+        setJuegos(juegosData);
+        setPlataformas(plataformasData);
+      } catch (error) {
+        if (!active) return;
+        setCatalogError('No se pudieron cargar los catálogos de juegos y plataformas.');
+      } finally {
+        if (active) setIsLoadingCatalogs(false);
+      }
+    };
+
+    loadCatalogs();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const selectedGame = juegos.find((j) => String(j.id) === String(formData.juegoId));
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
 
     if (errors[name]) {
-      setErrors({ ...errors, [name]: null });
+      setErrors((prev) => ({ ...prev, [name]: null }));
     }
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setCoverError('');
-
-    if (!file) return;
-
-    const validTypes = ['image/jpeg', 'image/png'];
-    if (!validTypes.includes(file.type)) {
-      setCoverError('Solo se permiten imágenes JPG o PNG.');
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      setCoverError('La imagen no puede superar los 5 MB.');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setCoverPreview(reader.result);
-    };
-    reader.readAsDataURL(file);
+    if (submitError) setSubmitError('');
   };
 
   const validateForm = () => {
-    let newErrors = {};
+    const newErrors = {};
 
-    if (!formData.title.trim()) {
-      newErrors.title = 'El título del juego es obligatorio.';
+    if (!formData.juegoId) {
+      newErrors.juegoId = 'Selecciona un juego del catálogo.';
     }
 
-    if (!formData.platform) {
-      newErrors.platform = 'Selecciona una plataforma.';
+    if (!formData.plataformaId) {
+      newErrors.plataformaId = 'Selecciona una plataforma.';
     }
 
     if (!formData.status) {
       newErrors.status = 'Selecciona el estado de tu partida.';
     }
 
-    if (formData.year) {
-      const yearNum = Number(formData.year);
-      if (isNaN(yearNum) || yearNum < 1970 || yearNum > 2030) {
-        newErrors.year = 'Ingresa un año válido (ej. 2024).';
-      }
-    }
-
-    if (formData.hours && Number(formData.hours) < 0) {
+    if (formData.hours !== '' && Number(formData.hours) < 0) {
       newErrors.hours = 'Las horas no pueden ser negativas.';
     }
 
@@ -91,18 +98,33 @@ export default function AddGame() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitError('');
 
-    if (validateForm()) {
-      setIsSaving(true);
-      try {
-        console.log('Nuevo juego a guardar:', { ...formData, hasCover: !!coverPreview });
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        navigate('/inventario');
-      } finally {
-        setIsSaving(false);
-      }
+    if (!validateForm()) return;
+
+    setIsSaving(true);
+    try {
+      await addGameToLibrary({
+        juegoId: formData.juegoId,
+        plataformaId: formData.plataformaId,
+        status: formData.status,
+        hours: formData.hours === '' ? 0 : Number(formData.hours),
+        lastSession: formData.lastSession || null,
+        rating: formData.rating > 0 ? formData.rating : null
+      });
+      navigate('/inventario');
+    } catch (error) {
+      const backendMsg =
+        error.response?.data?.mensaje ||
+        error.response?.data?.message ||
+        'No se pudo agregar el juego (puede que ya esté en tu bóveda).';
+      setSubmitError(backendMsg);
+    } finally {
+      setIsSaving(false);
     }
   };
+
+  const today = new Date().toISOString().split('T')[0];
 
   return (
     <div className="inventory-wrapper">
@@ -111,7 +133,7 @@ export default function AddGame() {
       <main className="detail-main">
         <div className="detail-breadcrumb">
           <Link to="/inventario" className="back-link">← VOLVER AL INVENTARIO</Link>
-          <span className="detail-player-tag">JUGADOR_01 / ARCHIVO PERSONAL</span>
+          <span className="detail-player-tag">ARCHIVO PERSONAL / CATÁLOGO</span>
         </div>
 
         <form className="save-point-card" onSubmit={handleSubmit} noValidate>
@@ -120,7 +142,7 @@ export default function AddGame() {
               <span className="highlight-green">💾</span> Nueva partida en tu bóveda
             </div>
             <div className="box-header-right">
-              REGISTRO MANUAL [ <span className="highlight-green">+</span> ]
+              REGISTRO EN BÓVEDA [ <span className="highlight-green">+</span> ]
             </div>
           </div>
 
@@ -128,51 +150,49 @@ export default function AddGame() {
             <div>
               <h1 className="detail-game-title">Agregar juego</h1>
               <p className="detail-game-meta">
-                Una nueva aventura merece su lugar en el inventario.
+                Elige un título del catálogo para guardarlo en tu inventario.
               </p>
             </div>
             <span className="required-legend">* CAMPOS OBLIGATORIOS</span>
           </div>
 
+          {catalogError && (
+            <div className="inventory-error-box" style={{ margin: '1.5rem 2rem 0' }}>
+              {catalogError}
+            </div>
+          )}
+
           <div className="detail-body">
             <aside className="detail-sidebar">
-              <span className="editor-label">PORTADA / OPCIONAL</span>
+              <span className="editor-label">PORTADA DEL CATÁLOGO</span>
 
-              <label className="cover-upload-box">
-                <input
-                  type="file"
-                  accept="image/jpeg, image/png"
-                  onChange={handleImageChange}
-                  hidden
-                />
-                {coverPreview ? (
-                  <img src={coverPreview} alt="Vista previa" className="cover-preview-img" />
+              <div className="cover-upload-box" style={{ cursor: 'default' }}>
+                {selectedGame?.portadaUrl ? (
+                  <img
+                    src={selectedGame.portadaUrl}
+                    alt={selectedGame.titulo}
+                    className="cover-preview-img"
+                  />
                 ) : (
                   <div className="upload-placeholder">
-                    <span className="upload-icon">⬆</span>
-                    <p className="upload-title">Subir portada</p>
-                    <p className="upload-desc">Arrastra una imagen o elige un archivo</p>
-                    <span className="upload-specs">JPG, PNG · MÁX. 5 MB</span>
+                    <span className="upload-icon">🎮</span>
+                    <p className="upload-title">Vista previa</p>
+                    <p className="upload-desc">
+                      Selecciona un juego del catálogo para ver su portada.
+                    </p>
                   </div>
                 )}
-              </label>
-
-              {coverError && <span className="error-text">{coverError}</span>}
-
-              <p className="cover-helper-text">
-                Formato recomendado: 2:3.<br />
-                Puedes agregarla más tarde.
-              </p>
+              </div>
 
               <div className="story-note-box">
                 <p className="story-note-title">TU JUEGO, TU HISTORIA.</p>
                 <p className="story-note-desc">
-                  Las puntuaciones y reseñas se quedan en tu bóveda personal.
+                  Las puntuaciones y horas jugadas se guardan en tu bóveda personal en MySQL.
                 </p>
               </div>
 
               <div className="manual-archive-tag">
-                ■ ARCHIVO PERSONAL / MANUAL
+                ■ CATÁLOGO OFICIAL PIXELVAULT
               </div>
             </aside>
 
@@ -184,17 +204,25 @@ export default function AddGame() {
 
               <div className="add-field">
                 <label className="editor-label">
-                  TÍTULO DEL JUEGO <span className="highlight-green">*</span>
+                  JUEGO DEL CATÁLOGO <span className="highlight-green">*</span>
                 </label>
-                <input
-                  type="text"
-                  name="title"
-                  className={`add-input ${errors.title ? 'input-error' : ''}`}
-                  placeholder="Escribe el nombre del juego"
-                  value={formData.title}
+                <select
+                  name="juegoId"
+                  className={`status-select ${errors.juegoId ? 'input-error' : ''}`}
+                  value={formData.juegoId}
                   onChange={handleChange}
-                />
-                {errors.title && <span className="error-text">{errors.title}</span>}
+                  disabled={isLoadingCatalogs}
+                >
+                  <option value="">
+                    {isLoadingCatalogs ? 'Cargando catálogo...' : 'Selecciona un juego'}
+                  </option>
+                  {juegos.map((juego) => (
+                    <option key={juego.id} value={juego.id}>
+                      {juego.titulo} {juego.anioLanzamiento ? `(${juego.anioLanzamiento})` : ''}
+                    </option>
+                  ))}
+                </select>
+                {errors.juegoId && <span className="error-text">{errors.juegoId}</span>}
               </div>
 
               <div className="add-row-2-1">
@@ -203,67 +231,56 @@ export default function AddGame() {
                     PLATAFORMA <span className="highlight-green">*</span>
                   </label>
                   <select
-                    name="platform"
-                    className={`status-select ${errors.platform ? 'input-error' : ''}`}
-                    value={formData.platform}
+                    name="plataformaId"
+                    className={`status-select ${errors.plataformaId ? 'input-error' : ''}`}
+                    value={formData.plataformaId}
                     onChange={handleChange}
+                    disabled={isLoadingCatalogs}
                   >
-                    <option value="">Selecciona una plataforma</option>
-                    <option value="Steam / PC">Steam / PC</option>
-                    <option value="Nintendo Switch">Nintendo Switch</option>
-                    <option value="PlayStation">PlayStation</option>
-                    <option value="Xbox">Xbox</option>
-                    <option value="Móvil">Móvil</option>
-                    <option value="Otra">Otra</option>
+                    <option value="">
+                      {isLoadingCatalogs ? 'Cargando plataformas...' : 'Selecciona una plataforma'}
+                    </option>
+                    {plataformas.map((plat) => (
+                      <option key={plat.id} value={plat.id}>
+                        {plat.nombre}
+                      </option>
+                    ))}
                   </select>
-                  {errors.platform && <span className="error-text">{errors.platform}</span>}
+                  {errors.plataformaId && <span className="error-text">{errors.plataformaId}</span>}
                 </div>
 
                 <div className="add-field">
                   <label className="editor-label">AÑO</label>
                   <input
                     type="text"
-                    name="year"
-                    maxLength="4"
-                    className={`add-input ${errors.year ? 'input-error' : ''}`}
-                    placeholder="Ej. 2024"
-                    value={formData.year}
-                    onChange={handleChange}
+                    className="add-input"
+                    value={selectedGame?.anioLanzamiento || ''}
+                    placeholder="—"
+                    readOnly
                   />
-                  {errors.year && <span className="error-text">{errors.year}</span>}
                 </div>
               </div>
 
               <div className="add-row-1-1">
                 <div className="add-field">
-                  <label className="editor-label">GÉNERO</label>
-                  <select
-                    name="genre"
-                    className="status-select"
-                    value={formData.genre}
-                    onChange={handleChange}
-                  >
-                    <option value="">Selecciona un género</option>
-                    <option value="Metroidvania">Metroidvania</option>
-                    <option value="RPG">RPG</option>
-                    <option value="Roguelike">Roguelike</option>
-                    <option value="Plataformas">Plataformas</option>
-                    <option value="Acción">Acción</option>
-                    <option value="Aventura">Aventura</option>
-                    <option value="Simulador">Simulador</option>
-                    <option value="Indie">Indie</option>
-                  </select>
+                  <label className="editor-label">GÉNEROS</label>
+                  <input
+                    type="text"
+                    className="add-input"
+                    value={selectedGame?.generos?.join(', ') || ''}
+                    placeholder="—"
+                    readOnly
+                  />
                 </div>
 
                 <div className="add-field">
                   <label className="editor-label">DESARROLLADOR</label>
                   <input
                     type="text"
-                    name="developer"
                     className="add-input"
-                    placeholder="Nombre del estudio"
-                    value={formData.developer}
-                    onChange={handleChange}
+                    value={selectedGame?.desarrollador || ''}
+                    placeholder="—"
+                    readOnly
                   />
                 </div>
               </div>
@@ -273,7 +290,7 @@ export default function AddGame() {
                 <span className="section-subtitle-muted">CADA MISIÓN CUENTA</span>
               </div>
 
-              <div className="add-row-2-1">
+              <div className="add-row-1-1">
                 <div className="add-field">
                   <label className="editor-label">
                     ESTADO DE JUEGO <span className="highlight-green">*</span>
@@ -284,7 +301,6 @@ export default function AddGame() {
                     value={formData.status}
                     onChange={handleChange}
                   >
-                    <option value="Pendiente">Pendiente</option>
                     <option value="Jugando">Jugando</option>
                     <option value="Completado">Completado</option>
                     <option value="Abandonado">Abandonado</option>
@@ -300,7 +316,7 @@ export default function AddGame() {
                     min="0"
                     step="0.5"
                     className={`add-input ${errors.hours ? 'input-error' : ''}`}
-                    placeholder="0 h"
+                    placeholder="0"
                     value={formData.hours}
                     onChange={handleChange}
                   />
@@ -308,49 +324,41 @@ export default function AddGame() {
                 </div>
               </div>
 
+              <div className="add-field">
+                <label className="editor-label">ÚLTIMA SESIÓN / OPCIONAL</label>
+                <input
+                  type="date"
+                  name="lastSession"
+                  max={today}
+                  className="add-input"
+                  value={formData.lastSession}
+                  onChange={handleChange}
+                />
+              </div>
+
               <div className="add-rating-row">
                 <div>
                   <label className="editor-label">TU PUNTUACIÓN / OPCIONAL</label>
-                    <HeartRating
+                  <HeartRating
                     rating={formData.rating}
-                    onChange={(val) => setFormData({ ...formData, rating: val })}
+                    onChange={(val) => setFormData((prev) => ({ ...prev, rating: val }))}
                     allowClear={true}
                   />
                 </div>
 
                 <div className="rating-right-info">
-                  <span className="rating-caption">{ratingLabels[formData.rating]}</span>
+                  <span className="rating-caption">
+                    {ratingLabels[formData.rating] || 'Sin puntuación'}
+                  </span>
                   <span className="rating-helper">Elige de 1 a 5 corazones.</span>
                 </div>
               </div>
 
-              <div className="form-section-header section-spacer">
-                <span className="section-title-green">03 / RESEÑA PERSONAL</span>
-                <span className="section-subtitle-muted">OPCIONAL</span>
-              </div>
-
-              <div className="terminal-editor-box">
-                <div className="terminal-prompt">
-                  C:\PIXELVAULT\RESEÑAS&gt; nueva_entrada.txt
+              {submitError && (
+                <div className="inventory-error-box" style={{ marginTop: '1.2rem' }}>
+                  {submitError}
                 </div>
-                <textarea
-                  name="review"
-                  className="terminal-textarea"
-                  rows="5"
-                  maxLength={2000}
-                  value={formData.review}
-                  onChange={handleChange}
-                  placeholder={'¿Qué te hizo sentir este juego?\nGuarda tus primeras impresiones o vuelve después para contarlo.'}
-                />
-                <div className="terminal-cursor-line">
-                  &gt; <span className="blinking-block">█</span>
-                </div>
-              </div>
-
-              <div className="review-meta-row">
-                <span>SOLO PARA TI / PUEDES EDITARLA DESPUÉS</span>
-                <span>{formData.review.length} / 2,000 CAR</span>
-              </div>
+              )}
             </section>
           </div>
 
@@ -359,7 +367,7 @@ export default function AddGame() {
               <span className="save-icon">💾</span>
               <div>
                 <p className="save-info-title">Tu próxima aventura, a salvo en tu bóveda.</p>
-                <p className="save-info-sub">Tu biblioteca de Steam no se verá afectada.</p>
+                <p className="save-info-sub">Se guardará directamente en tu cuenta.</p>
               </div>
             </div>
 
@@ -371,7 +379,11 @@ export default function AddGame() {
               >
                 Cancelar
               </button>
-              <button type="submit" className="btn-save-data" disabled={isSaving}>
+              <button
+                type="submit"
+                className="btn-save-data"
+                disabled={isSaving || isLoadingCatalogs}
+              >
                 {isSaving ? 'GUARDANDO...' : '⊕ Agregar juego'}
               </button>
             </div>
