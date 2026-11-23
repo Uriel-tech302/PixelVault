@@ -1,0 +1,26 @@
+meta {
+  name: 07 Parametros invalidos (400)
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/api/juegos?size=500&sort=password,asc
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+assert {
+  res.status: eq 400
+}
+
+tests {
+  test("indica que parametros fallan", function () {
+    expect(res.body.errores).to.have.property("size");
+    expect(res.body.errores).to.have.property("sort");
+  });
+}

@@ -1,0 +1,27 @@
+meta {
+  name: 17 Detalle de entrada
+  type: http
+  seq: 17
+}
+
+get {
+  url: {{baseUrl}}/api/biblioteca/{{itemId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+assert {
+  res.status: eq 200
+}
+
+tests {
+  test("trae lo que necesita la pantalla de detalle", function () {
+    expect(res.body.id).to.equal(Number(bru.getVar("itemId")));
+    expect(res.body).to.include.keys("desarrollador", "bannerUrl", "ultimaSesion", "plataforma", "generos");
+    expect(res.body.estado).to.equal("COMPLETADO");
+  });
+}

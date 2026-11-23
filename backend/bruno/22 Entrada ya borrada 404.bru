@@ -1,0 +1,19 @@
+meta {
+  name: 22 Entrada ya borrada (404)
+  type: http
+  seq: 22
+}
+
+get {
+  url: {{baseUrl}}/api/biblioteca/{{itemId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+assert {
+  res.status: eq 404
+}

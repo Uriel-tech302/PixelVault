@@ -1,0 +1,32 @@
+meta {
+  name: 13 Agregar juego que no existe (422)
+  type: http
+  seq: 13
+}
+
+post {
+  url: {{baseUrl}}/api/biblioteca
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+body:json {
+  {
+    "juegoId": 999999,
+    "plataformaId": {{plataformaId}}
+  }
+}
+
+assert {
+  res.status: eq 422
+}
+
+tests {
+  test("senala el campo", function () {
+    expect(res.body.errores).to.have.property("juegoId");
+  });
+}

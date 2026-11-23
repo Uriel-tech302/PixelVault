@@ -1,0 +1,23 @@
+meta {
+  name: 18 Entrada de otro usuario (404)
+  type: http
+  seq: 18
+}
+
+get {
+  url: {{baseUrl}}/api/biblioteca/{{itemId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+assert {
+  res.status: eq 404
+}
+
+docs {
+  El admin no puede ver ni editar la biblioteca del usuario: responde 404 igual que si no existiera.
+}

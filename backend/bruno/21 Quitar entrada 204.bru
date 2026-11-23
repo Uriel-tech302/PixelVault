@@ -1,0 +1,19 @@
+meta {
+  name: 21 Quitar entrada (204)
+  type: http
+  seq: 21
+}
+
+delete {
+  url: {{baseUrl}}/api/biblioteca/{{itemId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+assert {
+  res.status: eq 204
+}
