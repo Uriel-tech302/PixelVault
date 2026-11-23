@@ -10,6 +10,7 @@
   border-collapse: collapse;
   font-size: 0.8rem;
   text-align: left;
+  min-width: 600px;
 }
 
 .admin-table th {
