@@ -1,0 +1,72 @@
+.admin-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 2px solid var(--border-color);
+  background-color: var(--panel-bg);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  text-align: left;
+}
+
+.admin-table th {
+  padding: 1rem;
+  background-color: #12161f;
+  color: var(--accent-color);
+  font-family: var(--font-pixel);
+  font-size: 0.65rem;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.admin-table td {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--text-primary);
+}
+
+.admin-table tr:hover td {
+  background-color: rgba(176, 251, 61, 0.04);
+}
+
+.admin-role-select {
+  background-color: #0b0e14;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 0.35rem 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.admin-status {
+  font-size: 0.7rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid;
+}
+
+.admin-status.activo {
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.admin-status.inactivo {
+  color: var(--text-secondary);
+  border-color: var(--border-color);
+}
+
+.btn-admin-delete {
+  background-color: transparent;
+  color: var(--accent-pink);
+  border: 1px solid var(--accent-pink);
+  padding: 0.35rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.btn-admin-delete:hover {
+  background-color: var(--accent-pink);
+  color: #0b0e14;
+}

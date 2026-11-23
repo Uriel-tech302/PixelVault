@@ -9,6 +9,7 @@ import Inventory from './pages/Inventory';
 import GameDetail from './pages/GameDetail';
 import AddGame from './pages/AddGame';
 import Profile from './pages/Profile';
+import AdminPanel from './pages/AdminPanel';
 export default function App() {
   return (
     <AuthProvider>
@@ -42,6 +43,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <AddGame />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN']}>
+                <AdminPanel />
               </ProtectedRoute>
             }
           />

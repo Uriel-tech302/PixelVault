@@ -60,6 +60,15 @@ export default function Navbar({ showAddButton = true, searchTerm = '', onSearch
                 <span className="dropdown-user-email">{user?.email || 'sin@correo.com'}</span>
                 <span className="dropdown-user-role">ROL: {user?.role || 'USER'}</span>
               </div>
+              {user?.role === 'ADMIN' && (
+              <Link
+                to="/admin"
+                className="dropdown-item-link"
+                 onClick={() => setDropdownOpen(false)}
+              >
+               ⚙ Panel Admin
+              </Link>
+              )}
 
               <Link
                 to="/perfil"
