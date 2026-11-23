@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from 'react';
+import { logoutApi } from '../services/authService';
 
 const AuthContext = createContext();
 
@@ -19,12 +20,15 @@ export function AuthProvider({ children }) {
     localStorage.setItem('pixelvault_token', jwtToken);
   };
 
-  const logout = () => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem('pixelvault_user');
-    localStorage.removeItem('pixelvault_token');
-  };
+const logout = async () => {
+  if (token) {
+    await logoutApi();
+  }
+  setUser(null);
+  setToken(null);
+  localStorage.removeItem('pixelvault_user');
+  localStorage.removeItem('pixelvault_token');
+};
 
   const isAuthenticated = Boolean(token && user);
 
