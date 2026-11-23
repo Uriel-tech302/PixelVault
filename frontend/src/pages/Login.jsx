@@ -58,17 +58,23 @@ export default function Login() {
         await new Promise(resolve => setTimeout(resolve, 1500));
 
         console.log("Login exitoso");
-        const isAdmin = formData.email.toLowerCase().includes('admin');
-          login(
-          {
-            name: isAdmin ? 'Administrador' : 'Jugador_01',
-            email: formData.email,
-            role: isAdmin ? 'ADMIN' : 'USER',
-            avatar: isAdmin ? 'AD' : 'P1'
-      },
-            'token-jwt-simulado'
-        );           ;
-        navigate('/inventario'); // <-- REDIRECCIÓN AQUÍ
+  const emailLower = formData.email.toLowerCase();
+        let role = 'USER';
+        let name = 'Jugador_01';
+        let avatar = 'P1';
+
+        if (emailLower.includes('admin')) {
+          role = 'ADMIN';
+          name = 'Administrador';
+          avatar = 'AD';
+        } else if (emailLower.includes('mod')) {
+          role = 'MODERATOR';
+          name = 'Moderador_01';
+          avatar = 'MD';
+        }
+
+        login({ name, email: formData.email, role, avatar }, 'token-jwt-simulado');
+        navigate(role === 'ADMIN' ? '/admin' : '/inventario');
       } catch (error) {
         setErrors({ submit: 'Error al iniciar sesión. Verifica tus datos.' });
       } finally {
