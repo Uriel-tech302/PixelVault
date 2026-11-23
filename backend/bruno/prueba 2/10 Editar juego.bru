@@ -1,0 +1,41 @@
+meta {
+  name: Editar juego (PUT)
+  type: http
+  seq: 10
+}
+
+put {
+  url: {{baseUrl}}/api/juegos/{{juegoNuevoId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+    "titulo": "Juego de Prueba Bruno (editado)",
+    "anioLanzamiento": 2025,
+    "desarrollador": "Estudio Bruno 2",
+    "steamAppId": 2000000001,
+    "generoIds": [{{generoId}}]
+  }
+}
+
+assert {
+  res.status: eq 200
+}
+
+tests {
+  test("refleja los cambios", function () {
+    expect(res.body.titulo).to.equal("Juego de Prueba Bruno (editado)");
+    expect(res.body.anioLanzamiento).to.equal(2025);
+    expect(res.body.descripcion).to.equal(null);
+  });
+}
+
+docs {
+  PUT reemplaza todos los campos: como no se envia descripcion, queda en null.
+}

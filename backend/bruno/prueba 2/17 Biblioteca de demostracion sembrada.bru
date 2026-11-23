@@ -1,0 +1,31 @@
+meta {
+  name: Biblioteca de demostracion sembrada
+  type: http
+  seq: 17
+}
+
+get {
+  url: {{baseUrl}}/api/biblioteca?size=20&sort=titulo,asc
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+assert {
+  res.status: eq 200
+}
+
+tests {
+  test("el usuario de prueba tiene juegos de demostracion", function () {
+    expect(res.body.totalElementos).to.be.at.least(8);
+    const estados = new Set(res.body.contenido.map(i => i.estado));
+    expect(estados.has("JUGANDO") && estados.has("COMPLETADO") && estados.has("ABANDONADO")).to.equal(true);
+  });
+}
+
+docs {
+  Solo pasa si la biblioteca se sembro (APP_SEED_BIBLIOTECA_DEMO no es false) y el usuario no la vacio.
+}

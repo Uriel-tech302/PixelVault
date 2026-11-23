@@ -1,0 +1,47 @@
+meta {
+  name: Crear juego como ADMIN (201, guarda juegoNuevoId)
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/juegos
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+    "titulo": "Juego de Prueba Bruno",
+    "descripcion": "Creado desde Bruno",
+    "anioLanzamiento": 2024,
+    "desarrollador": "Estudio Bruno",
+    "steamAppId": 2000000001,
+    "generoIds": [{{generoId}}]
+  }
+}
+
+vars:post-response {
+  juegoNuevoId: res.body.id
+}
+
+assert {
+  res.status: eq 201
+}
+
+tests {
+  test("devuelve el juego con generos como lista y portada de Steam", function () {
+    expect(res.body.titulo).to.equal("Juego de Prueba Bruno");
+    expect(res.body.generos).to.be.an("array").that.is.not.empty;
+    expect(res.body.portadaUrl).to.include("/steam/apps/2000000001/");
+    expect(res.body.bannerUrl).to.include("library_hero.jpg");
+  });
+}
+
+docs {
+  Si una corrida anterior se corto antes del paso 15, esta peticion da 409 por el steamAppId repetido. Borra ese juego (DELETE /api/juegos/{id}) y repite.
+}

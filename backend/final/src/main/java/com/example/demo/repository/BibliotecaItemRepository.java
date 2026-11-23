@@ -20,6 +20,11 @@ public interface BibliotecaItemRepository extends JpaRepository<BibliotecaItem, 
 
     boolean existsByUsuarioIdAndJuegoIdAndPlataformaId(Long usuarioId, Long juegoId, Long plataformaId);
 
+    /** Para impedir borrar un juego que alguien tiene en su biblioteca. */
+    boolean existsByJuegoId(Long juegoId);
+
+    long countByUsuarioId(Long usuarioId);
+
     @Query("select b from BibliotecaItem b join fetch b.juego join fetch b.plataforma "
             + "where b.id = :id and b.usuario.id = :usuarioId")
     Optional<BibliotecaItem> detalle(@Param("id") Long id, @Param("usuarioId") Long usuarioId);
