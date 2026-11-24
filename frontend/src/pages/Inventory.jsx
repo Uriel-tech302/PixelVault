@@ -3,13 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import GameCard from '../components/GameCard';
-import { fetchGames } from '../services/gameService';
+import { fetchGames, getResumenBiblioteca } from '../services/gameService';
 import './Inventory.css';
 
 export default function Inventory() {
   const navigate = useNavigate();
 
   const [games, setGames] = useState([]);
+  const [resumen, setResumen] = useState({
+    totalJuegos: 0,
+    horasTotales: 0,
+    porcentajeCompletado: 0,
+    porEstado: { JUGANDO: 0, COMPLETADO: 0, ABANDONADO: 0 }
+  });
+
   const [activeTab, setActiveTab] = useState('Todos');
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(0);
@@ -30,6 +37,32 @@ export default function Inventory() {
     setSearchTerm(value);
     setPage(0);
   };
+
+  // Carga el resumen global de estadísticas desde /api/biblioteca/resumen
+  useEffect(() => {
+    let active = true;
+
+    const loadResumen = async () => {
+      try {
+        const data = await getResumenBiblioteca();
+        if (active && data) {
+          setResumen({
+            totalJuegos: data.totalJuegos ?? 0,
+            horasTotales: data.horasTotales ?? 0,
+            porcentajeCompletado: data.porcentajeCompletado ?? 0,
+            porEstado: data.porEstado || { JUGANDO: 0, COMPLETADO: 0, ABANDONADO: 0 }
+          });
+        }
+      } catch {
+        // Si falla el resumen, mantenemos los valores en 0 sin romper la vista
+      }
+    };
+
+    loadResumen();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -71,39 +104,51 @@ export default function Inventory() {
       <main className="inventory-content">
         <header className="inventory-header">
           <div className="header-info">
-            <span className="player-tag">JUGADOR_01 / ARCHIVO PERSONAL DE JUEGOS</span>
+            <span className="player-tag">ARCHIVO PERSONAL DE JUEGOS</span>
             <h1 className="inventory-title">El inventario</h1>
             <p className="inventory-subtitle">Cada misión. Cada final. Todo en una bóveda.</p>
           </div>
 
           <div className="header-stats">
             <div className="stat-box">
-              <span className="stat-value highlight-orange">{totalElements}</span>
+              <span className="stat-value highlight-orange">{resumen.totalJuegos}</span>
               <span className="stat-label">JUEGOS</span>
             </div>
             <div className="stat-box">
-              <span className="stat-value highlight-orange">435 h</span>
+              <span className="stat-value highlight-orange">{resumen.horasTotales} h</span>
               <span className="stat-label">TIEMPO JUGADO</span>
             </div>
             <div className="stat-box">
-              <span className="stat-value highlight-orange">50%</span>
+              <span className="stat-value highlight-orange">{resumen.porcentajeCompletado}%</span>
               <span className="stat-label">COMPLETADO</span>
             </div>
           </div>
         </header>
 
         <div className="inventory-tabs">
-          <button className={`tab-btn ${activeTab === 'Todos' ? 'active' : ''}`} onClick={() => handleTabChange('Todos')}>
-            ▣ Todos
+          <button
+            className={`tab-btn ${activeTab === 'Todos' ? 'active' : ''}`}
+            onClick={() => handleTabChange('Todos')}
+          >
+            ▣ Todos <span className="tab-count">{resumen.totalJuegos}</span>
           </button>
-          <button className={`tab-btn ${activeTab === 'Jugando' ? 'active' : ''}`} onClick={() => handleTabChange('Jugando')}>
-            ⚔ Jugando
+          <button
+            className={`tab-btn ${activeTab === 'Jugando' ? 'active' : ''}`}
+            onClick={() => handleTabChange('Jugando')}
+          >
+            ⚔ Jugando <span className="tab-count">{resumen.porEstado?.JUGANDO ?? 0}</span>
           </button>
-          <button className={`tab-btn ${activeTab === 'Completados' ? 'active' : ''}`} onClick={() => handleTabChange('Completados')}>
-            ✓ Completados
+          <button
+            className={`tab-btn ${activeTab === 'Completados' ? 'active' : ''}`}
+            onClick={() => handleTabChange('Completados')}
+          >
+            ✓ Completados <span className="tab-count">{resumen.porEstado?.COMPLETADO ?? 0}</span>
           </button>
-          <button className={`tab-btn ${activeTab === 'Abandonados' ? 'active' : ''}`} onClick={() => handleTabChange('Abandonados')}>
-            ♥ Abandonados
+          <button
+            className={`tab-btn ${activeTab === 'Abandonados' ? 'active' : ''}`}
+            onClick={() => handleTabChange('Abandonados')}
+          >
+            ♥ Abandonados <span className="tab-count">{resumen.porEstado?.ABANDONADO ?? 0}</span>
           </button>
         </div>
 

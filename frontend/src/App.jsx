@@ -10,6 +10,7 @@ import GameDetail from './pages/GameDetail';
 import AddGame from './pages/AddGame';
 import Profile from './pages/Profile';
 import AdminPanel from './pages/AdminPanel';
+import ResetPassword from './pages/ResetPassword';
 export default function App() {
   return (
     <AuthProvider>
@@ -20,6 +21,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Register />} />
           <Route path="/recuperar" element={<ForgotPassword />} />
+          <Route path="/restablecer" element={<ResetPassword />} />
 
           {/* Rutas protegidas */}
           <Route
