@@ -49,7 +49,7 @@ public class PasswordResetService {
     @Transactional
     public void solicitar(String emailCrudo) {
         String email = emailCrudo.trim().toLowerCase(Locale.ROOT);
-        usuarioRepository.findByEmail(email).ifPresent(usuario -> {
+        usuarioRepository.findByEmail(email).filter(Usuario::isActivo).ifPresent(usuario -> {
             tokenRepository.invalidarPendientes(usuario.getId());
 
             String token = generarToken();
@@ -69,6 +69,7 @@ public class PasswordResetService {
         PasswordResetToken entidad = tokenRepository.findByTokenHash(hash(token.trim()))
                 .filter(t -> !t.isUsado())
                 .filter(t -> t.getExpiraEn().isAfter(LocalDateTime.now(ZoneOffset.UTC)))
+                .filter(t -> t.getUsuario().isActivo())
                 .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST,
                         "El enlace no es válido o ya venció.",
                         Map.of("token", "El enlace no es válido o ya venció. Solicita uno nuevo.")));
