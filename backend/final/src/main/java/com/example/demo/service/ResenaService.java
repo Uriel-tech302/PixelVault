@@ -28,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ResenaService {
 
-    /** Resultado de guardar: permite responder 201 al crear y 200 al editar. */
     public record Guardada(ResenaResumenResponse resena, boolean creada) {
     }
 
@@ -47,9 +46,6 @@ public class ResenaService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    // ---------------------------------------------------------------- autor
-
-    /** Crea o reemplaza la resena de una entrada propia. Si estaba oculta por moderacion, sigue oculta. */
     @Transactional
     public Guardada guardar(Long usuarioId, Long itemId, ResenaRequest r) {
         BibliotecaItem item = bibliotecaRepository.findByIdAndUsuarioId(itemId, usuarioId)
@@ -77,8 +73,6 @@ public class ResenaService {
         resenaRepository.delete(resena);
     }
 
-    // -------------------------------------------------------------- publicas
-
     @Transactional(readOnly = true)
     public PageResponse<ResenaPublicaResponse> publicasDeJuego(Long juegoId, String page, String size) {
         if (!juegoRepository.existsById(juegoId)) {
@@ -100,9 +94,6 @@ public class ResenaService {
         return PageResponse.de(contenido, pagina, tamanio, resultado.getTotalElements());
     }
 
-    // ------------------------------------------------------------ moderacion
-
-    /** Lista las resenas publicas (ocultas o no). Las privadas no son asunto de la moderacion. */
     @Transactional(readOnly = true)
     public PageResponse<ResenaModeracionResponse> listarModeracion(String oculta, String q,
                                                                    String page, String size) {
@@ -159,8 +150,6 @@ public class ResenaService {
     public void eliminar(Long id) {
         resenaRepository.delete(buscar(id));
     }
-
-    // --------------------------------------------------------------- helpers
 
     private Resena buscar(Long id) {
         return resenaRepository.findById(id)
