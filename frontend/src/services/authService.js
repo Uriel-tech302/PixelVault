@@ -33,3 +33,12 @@ export async function logoutApi() {
     // Si el token ya expiró o falló la red, igual limpiamos sesión local
   }
 }
+export async function forgotPasswordApi(email) {
+  const { data } = await api.post('/auth/forgot-password', { email });
+  return data;
+}
+
+export async function resetPasswordApi({ token, nuevaPassword }) {
+  const { data } = await api.post('/auth/reset-password', { token, nuevaPassword });
+  return data;
+}

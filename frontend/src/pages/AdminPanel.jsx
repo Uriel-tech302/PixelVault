@@ -8,11 +8,11 @@ import './GameDetail.css';
 import './AdminPanel.css';
 
 const initialUsers = [
-  { id: 1, name: 'Administrador', email: 'admin@pixelvault.com', role: 'ADMIN', status: 'ACTIVO' },
-  { id: 2, name: 'Moderador_01', email: 'mod@pixelvault.com', role: 'MODERATOR', status: 'ACTIVO' },
-  { id: 3, name: 'Jugador_01', email: 'jugador@pixelvault.com', role: 'USER', status: 'ACTIVO' },
-  { id: 4, name: 'Uriel_Dev', email: 'uriel@pixelvault.com', role: 'USER', status: 'ACTIVO' },
-  { id: 5, name: 'Kevin_Back', email: 'kevin@pixelvault.com', role: 'MODERATOR', status: 'INACTIVO' }
+  { id: 1, name: 'admin', email: 'admin@pixelvault.com', role: 'ADMIN', status: 'ACTIVO' },
+  { id: 2, name: 'moderador', email: 'moderador@pixelvault.com', role: 'MODERADOR', status: 'ACTIVO' },
+  { id: 3, name: 'usuario', email: 'usuario@pixelvault.com', role: 'USUARIO', status: 'ACTIVO' },
+  { id: 4, name: 'Uriel_Dev', email: 'uriel@pixelvault.com', role: 'USUARIO', status: 'ACTIVO' },
+  { id: 5, name: 'Kevin_Back', email: 'kevin@pixelvault.com', role: 'MODERADOR', status: 'INACTIVO' }
 ];
 
 export default function AdminPanel() {
@@ -27,7 +27,8 @@ export default function AdminPanel() {
       : users.filter((u) => u.role === roleFilter);
 
   const handleRoleChange = (userId, newRole) => {
-    // Aquí conectarás Axios: await api.patch(`/admin/usuarios/${userId}/rol`, { role: newRole });
+    // Listo para conectar cuando Kevin suba /api/admin/usuarios:
+    // await api.patch(`/admin/usuarios/${userId}/rol`, { rol: newRole });
     setUsers((prev) =>
       prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u))
     );
@@ -37,7 +38,7 @@ export default function AdminPanel() {
     if (!userToDelete) return;
     setIsProcessing(true);
     try {
-      // Aquí conectarás Axios: await api.delete(`/admin/usuarios/${userToDelete.id}`);
+      // await api.delete(`/admin/usuarios/${userToDelete.id}`);
       await new Promise((resolve) => setTimeout(resolve, 600));
       setUsers((prev) => prev.filter((u) => u.id !== userToDelete.id));
       setUserToDelete(null);
@@ -76,7 +77,7 @@ export default function AdminPanel() {
             </div>
             <div className="stat-box">
               <span className="stat-value highlight-orange">
-                {users.filter((u) => u.role === 'MODERATOR').length}
+                {users.filter((u) => u.role === 'MODERADOR').length}
               </span>
               <span className="stat-label">MODS</span>
             </div>
@@ -84,7 +85,7 @@ export default function AdminPanel() {
         </header>
 
         <div className="inventory-tabs">
-          {['TODOS', 'ADMIN', 'MODERATOR', 'USER'].map((role) => (
+          {['TODOS', 'ADMIN', 'MODERADOR', 'USUARIO'].map((role) => (
             <button
               key={role}
               className={`tab-btn ${roleFilter === role ? 'active' : ''}`}
@@ -120,8 +121,8 @@ export default function AdminPanel() {
                       onChange={(e) => handleRoleChange(u.id, e.target.value)}
                     >
                       <option value="ADMIN">ADMIN</option>
-                      <option value="MODERATOR">MODERATOR</option>
-                      <option value="USER">USER</option>
+                      <option value="MODERADOR">MODERADOR</option>
+                      <option value="USUARIO">USUARIO</option>
                     </select>
                   </td>
                   <td>
