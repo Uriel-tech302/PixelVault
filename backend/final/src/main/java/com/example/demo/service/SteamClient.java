@@ -30,7 +30,9 @@ public class SteamClient {
     private static final Pattern VISIBILIDAD = Pattern.compile("\"communityvisibilitystate\"\\s*:\\s*(\\d+)");
     private static final Pattern NOMBRE = Pattern.compile("\"personaname\"\\s*:\\s*\"((?:[^\"\\\\]|\\\\.)*)\"");
     private static final Pattern CERO_JUEGOS = Pattern.compile("\"game_count\"\\s*:\\s*0\\b");
-    private static final Pattern OBJETO = Pattern.compile("\\{[^{}]*}");
+    // Un objeto { ... } de la lista de juegos; tolera llaves dentro de textos entre comillas.
+    private static final Pattern OBJETO = Pattern.compile("\\{(?:[^{}\"]|\"(?:[^\"\\\\]|\\\\.)*\")*}");
+    private static final Pattern JUEGO_NOMBRE = Pattern.compile("\"name\"\\s*:\\s*\"((?:[^\"\\\\]|\\\\.)*)\"");
     private static final Pattern APPID = Pattern.compile("\"appid\"\\s*:\\s*(\\d+)");
     private static final Pattern MINUTOS = Pattern.compile("\"playtime_forever\"\\s*:\\s*(\\d+)");
     private static final Pattern ULTIMA = Pattern.compile("\"rtime_last_played\"\\s*:\\s*(\\d+)");
@@ -38,7 +40,7 @@ public class SteamClient {
     public record Jugador(String steamId, String nombre, boolean perfilPublico) {
     }
 
-    public record JuegoSteam(int appId, int minutos, long ultimaVezUnix) {
+    public record JuegoSteam(int appId, String nombre, int minutos, long ultimaVezUnix) {
     }
 
     private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
@@ -72,14 +74,18 @@ public class SteamClient {
 
     public List<JuegoSteam> juegos(String steamId) {
         String cuerpo = get("/IPlayerService/GetOwnedGames/v1/",
-                "steamid=" + enc(steamId) + "&include_played_free_games=1");
+                "steamid=" + enc(steamId) + "&include_played_free_games=1&include_appinfo=1");
+        return parsearJuegos(cuerpo);
+    }
+
+    static List<JuegoSteam> parsearJuegos(String cuerpo) {
         int ini = cuerpo.indexOf("\"games\"");
         if (ini < 0) {
             return CERO_JUEGOS.matcher(cuerpo).find() ? List.of() : null;
         }
         int abre = cuerpo.indexOf('[', ini);
-        int cierra = abre < 0 ? -1 : cuerpo.indexOf(']', abre);
-        if (abre < 0 || cierra < 0) {
+        int cierra = abre < 0 ? -1 : cuerpo.lastIndexOf(']');
+        if (abre < 0 || cierra < abre) {
             return List.of();
         }
 
@@ -91,14 +97,55 @@ public class SteamClient {
             if (!app.find()) {
                 continue;
             }
+            int appId = Integer.parseInt(app.group(1));
+            Matcher nom = JUEGO_NOMBRE.matcher(o);
+            String nombre = nom.find() ? desescapar(nom.group(1)).trim() : "";
+            if (nombre.isEmpty()) {
+                nombre = "Steam App " + appId;
+            }
             Matcher min = MINUTOS.matcher(o);
             Matcher ult = ULTIMA.matcher(o);
             juegos.add(new JuegoSteam(
-                    Integer.parseInt(app.group(1)),
+                    appId,
+                    nombre,
                     min.find() ? Integer.parseInt(min.group(1)) : 0,
                     ult.find() ? Long.parseLong(ult.group(1)) : 0L));
         }
         return juegos;
+    }
+
+    private static String desescapar(String t) {
+        if (t.indexOf('\\') < 0) {
+            return t;
+        }
+        StringBuilder sb = new StringBuilder(t.length());
+        for (int i = 0; i < t.length(); i++) {
+            char c = t.charAt(i);
+            if (c != '\\' || i + 1 >= t.length()) {
+                sb.append(c);
+                continue;
+            }
+            char n = t.charAt(++i);
+            switch (n) {
+                case 'n' -> sb.append(' ');
+                case 't' -> sb.append(' ');
+                case 'r' -> { }
+                case 'u' -> {
+                    if (i + 4 < t.length()) {
+                        try {
+                            sb.append((char) Integer.parseInt(t.substring(i + 1, i + 5), 16));
+                            i += 4;
+                        } catch (NumberFormatException e) {
+                            sb.append('u');
+                        }
+                    } else {
+                        sb.append('u');
+                    }
+                }
+                default -> sb.append(n);
+            }
+        }
+        return sb.toString();
     }
 
     private String get(String ruta, String consulta) {
