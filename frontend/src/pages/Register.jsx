@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
 import heroImage from '../assets/hollow-knight.jpg';
 import lockIcon from '../assets/candado.svg';
 import { registerApi } from '../services/authService';
 
 export default function Register() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -20,8 +21,7 @@ export default function Register() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  // Regla de seguridad de tu rúbrica: mín. 8 caracteres, 1 mayúscula, 1 número y 1 especial
-  const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -52,7 +52,7 @@ export default function Register() {
     if (!formData.password) {
       newErrors.password = 'La contraseña es obligatoria.';
     } else if (!passwordRegex.test(formData.password)) {
-      newErrors.password = 'Mín. 8 caracteres, 1 mayúscula, 1 número y 1 especial (@$!%*?&).';
+      newErrors.password = 'Mín. 8 caracteres, 1 mayúscula, 1 número y 1 especial.';
     }
 
     if (!formData.confirmPassword) {
@@ -76,7 +76,7 @@ export default function Register() {
       setIsLoading(true);
       try {
         await registerApi({
-          username: formData.username, // asegúrate que coincida con el nombre de tu estado
+          username: formData.username,
           email: formData.email,
           password: formData.password
         });
@@ -95,7 +95,6 @@ export default function Register() {
 
   return (
     <div className="login-wrapper">
-      {/* Header externo superior */}
       <header className="login-header-container">
         <div className="login-header-top">
           <div className="logo">
@@ -110,7 +109,6 @@ export default function Register() {
         </div>
       </header>
 
-      {/* Consola */}
       <div className="console-header-wrapper">
         <div className="login-header-bottom">
           <span className="console-path">
@@ -120,7 +118,6 @@ export default function Register() {
         </div>
       </div>
 
-      {/* Contenedor Principal (La Bóveda) */}
       <main className="login-container">
         <div className="box-header">
           <div className="box-header-left">
@@ -132,7 +129,6 @@ export default function Register() {
         </div>
 
         <div className="box-content">
-          {/* Columna Izquierda: Imagen Hero */}
           <section className="login-hero">
             <div className="hero-tag">
               <span className="tag-highlight">P1</span> UN NUEVO JUGADOR SE UNE
@@ -156,7 +152,6 @@ export default function Register() {
             </div>
           </section>
 
-          {/* Columna Derecha: Formulario de Registro */}
           <section className="login-form-section register-form-section">
             <div className="form-header">
               <h1>Crea una cuenta</h1>
@@ -164,7 +159,6 @@ export default function Register() {
             </div>
 
             <form onSubmit={handleSubmit} noValidate>
-              {/* 01 / NOMBRE DE USUARIO */}
               <div className="input-group compact-group">
                 <label>01 / NOMBRE DE USUARIO</label>
                 <input
@@ -178,7 +172,6 @@ export default function Register() {
                 {errors.username && <span className="error-text">{errors.username}</span>}
               </div>
 
-              {/* 02 / CORREO ELECTRÓNICO */}
               <div className="input-group compact-group">
                 <label>02 / CORREO ELECTRÓNICO</label>
                 <input
@@ -192,7 +185,6 @@ export default function Register() {
                 {errors.email && <span className="error-text">{errors.email}</span>}
               </div>
 
-              {/* 03 / CONTRASEÑA */}
               <div className="input-group compact-group">
                 <label>03 / CONTRASEÑA</label>
                 <div className="password-wrapper">
@@ -223,7 +215,6 @@ export default function Register() {
                 {errors.password && <span className="error-text">{errors.password}</span>}
               </div>
 
-              {/* 04 / CONFIRMAR CONTRASEÑA */}
               <div className="input-group compact-group">
                 <label>04 / CONFIRMAR CONTRASEÑA</label>
                 <div className="password-wrapper">
@@ -253,7 +244,6 @@ export default function Register() {
                 )}
               </div>
 
-              {/* Términos y condiciones */}
               <div className="terms-group">
                 <label className="checkbox-container terms-label">
                   <input
@@ -277,17 +267,6 @@ export default function Register() {
                 <span className="btn-arrow">➔</span>
               </button>
 
-              <div className="divider">
-                <span>O CONTINÚA CON</span>
-              </div>
-
-              <button type="button" className="btn-steam">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.454 1.012zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z" />
-                </svg>
-                <span>Continúa con Steam</span>
-              </button>
-
               <div className="register-link">
                 ¿Ya tienes cuenta? <Link to="/login">Inicia sesión ↗</Link>
               </div>
@@ -295,7 +274,6 @@ export default function Register() {
           </section>
         </div>
 
-        {/* Barra inferior dentro de la caja */}
         <div className="box-footer">
           <div className="box-footer-left">
             <span className="highlight-green">■</span> CONEXIÓN SEGURA
