@@ -1,0 +1,30 @@
+meta {
+  name: Agregar el juego nuevo a la biblioteca (201, guarda itemNuevoId)
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{baseUrl}}/api/biblioteca
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+body:json {
+  {
+    "juegoId": {{juegoNuevoId}},
+    "plataformaId": {{plataformaId}}
+  }
+}
+
+vars:post-response {
+  itemNuevoId: res.body.id
+}
+
+assert {
+  res.status: eq 201
+}

@@ -1,0 +1,35 @@
+meta {
+  name: 12 Agregar con datos invalidos (400)
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{baseUrl}}/api/biblioteca
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+body:json {
+  {
+    "plataformaId": {{plataformaId}},
+    "horasJugadas": -3,
+    "puntuacion": 9
+  }
+}
+
+assert {
+  res.status: eq 400
+}
+
+tests {
+  test("un mensaje por campo", function () {
+    expect(res.body.errores).to.have.property("juegoId");
+    expect(res.body.errores).to.have.property("horasJugadas");
+    expect(res.body.errores).to.have.property("puntuacion");
+  });
+}

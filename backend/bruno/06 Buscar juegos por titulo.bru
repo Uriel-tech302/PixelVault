@@ -1,0 +1,26 @@
+meta {
+  name: 06 Buscar juegos por titulo (q)
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/juegos?q=hollow
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+assert {
+  res.status: eq 200
+}
+
+tests {
+  test("el filtro lo aplica el servidor", function () {
+    expect(res.body.totalElementos).to.be.at.least(1);
+    res.body.contenido.forEach(j => expect(j.titulo.toLowerCase()).to.include("hollow"));
+  });
+}

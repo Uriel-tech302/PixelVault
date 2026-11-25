@@ -1,0 +1,26 @@
+meta {
+  name: 11 Agregar duplicado (409)
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{baseUrl}}/api/biblioteca
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+body:json {
+  {
+    "juegoId": {{juegoId}},
+    "plataformaId": {{plataformaId}}
+  }
+}
+
+assert {
+  res.status: eq 409
+}

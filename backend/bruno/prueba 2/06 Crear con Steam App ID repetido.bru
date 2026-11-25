@@ -1,0 +1,36 @@
+meta {
+  name: Crear con Steam App ID repetido (409)
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/juegos
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+    "titulo": "Juego de Prueba Bruno",
+    "descripcion": "Creado desde Bruno",
+    "anioLanzamiento": 2024,
+    "desarrollador": "Estudio Bruno",
+    "steamAppId": 2000000001,
+    "generoIds": [{{generoId}}]
+  }
+}
+
+assert {
+  res.status: eq 409
+}
+
+tests {
+  test("senala el campo", function () {
+    expect(res.body.errores).to.have.property("steamAppId");
+  });
+}

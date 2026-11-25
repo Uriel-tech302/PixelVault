@@ -1,0 +1,26 @@
+meta {
+  name: 03 Login moderador (guarda moderadorToken)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "moderador@pixelvault.com",
+    "password": "{{moderadorPassword}}"
+  }
+}
+
+vars:post-response {
+  moderadorToken: res.body.token
+}
+
+assert {
+  res.status: eq 200
+}

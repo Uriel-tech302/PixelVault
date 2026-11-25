@@ -40,6 +40,9 @@ public class Usuario {
     @Column(name = "steam_id", length = 20, unique = true)
     private String steamId;
 
+    @Column(name = "steam_ultima_sincronizacion")
+    private LocalDateTime steamUltimaSincronizacion;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "rol_id", nullable = false)
     private Rol rol;
@@ -117,6 +120,14 @@ public class Usuario {
 
     public void setSteamId(String steamId) {
         this.steamId = steamId;
+    }
+
+    public LocalDateTime getSteamUltimaSincronizacion() {
+        return steamUltimaSincronizacion;
+    }
+
+    public void setSteamUltimaSincronizacion(LocalDateTime steamUltimaSincronizacion) {
+        this.steamUltimaSincronizacion = steamUltimaSincronizacion;
     }
 
     public Rol getRol() {

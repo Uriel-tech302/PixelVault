@@ -1,5 +1,6 @@
 package com.example.demo.config;
 
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import com.example.demo.repository.TokenRevocadoRepository;
 import com.example.demo.repository.UsuarioRepository;
@@ -55,17 +56,14 @@ public class SecurityConfig {
                         .accessDeniedHandler(new RestAccessDeniedHandler()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        // Publicas
-                        .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login").permitAll()
-                        // Catalogo: lectura para cualquier usuario autenticado, escritura solo ADMIN
+                        .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login",
+                                "/api/auth/forgot-password", "/api/auth/reset-password").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/juegos/**", "/api/generos/**", "/api/plataformas/**")
                         .authenticated()
                         .requestMatchers("/api/juegos/**", "/api/generos/**", "/api/plataformas/**")
                         .hasRole("ADMIN")
-                        // Paneles
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/moderacion/**").hasAnyRole("ADMIN", "MODERADOR")
-                        // Todo lo demas requiere token valido
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
