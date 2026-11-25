@@ -5,6 +5,7 @@ import com.example.demo.dto.SteamSincronizacionResponse;
 import com.example.demo.exception.ApiException;
 import com.example.demo.model.BibliotecaItem;
 import com.example.demo.model.EstadoJuego;
+import com.example.demo.model.Juego;
 import com.example.demo.model.Plataforma;
 import com.example.demo.model.Usuario;
 import com.example.demo.repository.BibliotecaItemRepository;
@@ -40,6 +41,8 @@ public class SteamService {
     private static final Pattern NOMBRE = Pattern.compile("^[A-Za-z0-9_-]{2,32}$");
 
     private static final long SEGUNDOS_ENTRE_SINCRONIZACIONES = 60;
+    private static final int MAX_TITULO = 150;
+    private static final String PORTADA_STEAM = "https://cdn.cloudflare.steamstatic.com/steam/apps/%d/header.jpg";
 
     private final SteamClient steam;
     private final UsuarioRepository usuarioRepository;
@@ -135,8 +138,14 @@ public class SteamService {
         for (SteamClient.JuegoSteam s : propios) {
             Long juegoId = catalogo.get(s.appId());
             if (juegoId == null) {
-                omitidos++;
-                continue;
+                Juego nuevoJuego = new Juego();
+                nuevoJuego.setTitulo(titulo(s));
+                nuevoJuego.setSteamAppId(s.appId());
+                nuevoJuego.setPortadaUrl(PORTADA_STEAM.formatted(s.appId()));
+                nuevoJuego.setDescripcion("Importado automáticamente desde Steam.");
+                nuevoJuego.setCreadoPor(usuario);
+                juegoId = juegoRepository.save(nuevoJuego).getId();
+                catalogo.put(s.appId(), juegoId);
             }
             BigDecimal horas = BigDecimal.valueOf(s.minutos()).divide(BigDecimal.valueOf(60), 1, RoundingMode.HALF_UP);
             LocalDate ultimaSesion = s.ultimaVezUnix() > 0
@@ -177,6 +186,14 @@ public class SteamService {
 
         return new SteamSincronizacionResponse(importados, actualizados, omitidos, propios.size(),
                 ahora.toString());
+    }
+
+    private static String titulo(SteamClient.JuegoSteam s) {
+        String t = s.nombre() == null ? "" : s.nombre().trim();
+        if (t.isEmpty()) {
+            t = "Steam App " + s.appId();
+        }
+        return t.length() > MAX_TITULO ? t.substring(0, MAX_TITULO) : t;
     }
 
     private String resolver(String entrada) {
