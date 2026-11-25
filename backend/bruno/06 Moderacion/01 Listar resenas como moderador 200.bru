@@ -1,0 +1,27 @@
+meta {
+  name: Listar resenas como moderador 200
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/moderacion/resenas?q=BrunoTest&page=0&size=50
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{moderadorToken}}
+}
+
+script:post-response {
+  const a = Array.isArray(res.body) ? res.body : (res.body.contenido || []);
+  const r = a.find(x => JSON.stringify(x).includes("BrunoTest")) || a[0];
+  if (r) { bru.setVar("resenaId", r.id); }
+}
+
+tests {
+  test("Responde 200", function () {
+    expect(res.status).to.equal(200);
+  });
+}

@@ -1,0 +1,27 @@
+meta {
+  name: Ocultar resena inexistente 404
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/api/moderacion/resenas/999999999/ocultar
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{moderadorToken}}
+}
+
+body:json {
+  {
+    "motivo": "No existe"
+  }
+}
+
+tests {
+  test("Responde 404", function () {
+    expect(res.status).to.equal(404);
+  });
+}

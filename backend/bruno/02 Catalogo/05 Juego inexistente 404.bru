@@ -1,0 +1,21 @@
+meta {
+  name: Juego inexistente 404
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/juegos/999999999
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+tests {
+  test("Responde 404", function () {
+    expect(res.status).to.equal(404);
+  });
+}

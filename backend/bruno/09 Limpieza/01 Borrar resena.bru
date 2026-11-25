@@ -1,0 +1,21 @@
+meta {
+  name: Borrar resena
+  type: http
+  seq: 1
+}
+
+delete {
+  url: {{baseUrl}}/api/biblioteca/{{itemId}}/resena
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+tests {
+  test("Responde 200 o 204", function () {
+    expect([200, 204]).to.include(res.status);
+  });
+}

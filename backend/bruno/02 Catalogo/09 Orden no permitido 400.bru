@@ -1,0 +1,21 @@
+meta {
+  name: Orden no permitido 400
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{baseUrl}}/api/juegos?sort=password,asc
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+tests {
+  test("Responde 400", function () {
+    expect(res.status).to.equal(400);
+  });
+}

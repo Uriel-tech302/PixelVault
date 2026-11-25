@@ -1,0 +1,24 @@
+meta {
+  name: Login credenciales incorrectas 401
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "usuario@pixelvault.com",
+    "password": "Incorrecta1!"
+  }
+}
+
+tests {
+  test("Responde 401", function () {
+    expect(res.status).to.equal(401);
+  });
+}

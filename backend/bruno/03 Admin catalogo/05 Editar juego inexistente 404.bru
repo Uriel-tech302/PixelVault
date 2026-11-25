@@ -1,0 +1,34 @@
+meta {
+  name: Editar juego inexistente 404
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{baseUrl}}/api/juegos/999999999
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+    "titulo": "Juego Bruno editado",
+    "descripcion": "Creado por la coleccion de pruebas.",
+    "anioLanzamiento": 2024,
+    "desarrollador": "Equipo Bruno",
+    "portadaUrl": "https://example.com/portada.jpg",
+    "generoIds": [
+      {{generoId}}
+    ]
+  }
+}
+
+tests {
+  test("Responde 404", function () {
+    expect(res.status).to.equal(404);
+  });
+}

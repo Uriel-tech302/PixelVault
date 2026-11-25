@@ -1,0 +1,26 @@
+meta {
+  name: Generos 200
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/generos
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+script:post-response {
+  const a = Array.isArray(res.body) ? res.body : (res.body.contenido || []);
+  if (a.length) { bru.setVar("generoId", a[0].id); }
+}
+
+tests {
+  test("Responde 200", function () {
+    expect(res.status).to.equal(200);
+  });
+}

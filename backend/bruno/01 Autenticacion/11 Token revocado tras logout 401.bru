@@ -1,0 +1,21 @@
+meta {
+  name: Token revocado tras logout 401
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{baseUrl}}/api/biblioteca/resumen
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{nuevoToken}}
+}
+
+tests {
+  test("Responde 401", function () {
+    expect(res.status).to.equal(401);
+  });
+}

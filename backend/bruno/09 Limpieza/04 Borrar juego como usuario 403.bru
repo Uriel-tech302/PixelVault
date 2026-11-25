@@ -1,0 +1,21 @@
+meta {
+  name: Borrar juego como usuario 403
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{baseUrl}}/api/juegos/{{juegoNuevoId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+tests {
+  test("Responde 403", function () {
+    expect(res.status).to.equal(403);
+  });
+}

@@ -1,0 +1,21 @@
+meta {
+  name: Buscar juegos por titulo 200
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/juegos?q=a&page=0&size=5
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+tests {
+  test("Responde 200", function () {
+    expect(res.status).to.equal(200);
+  });
+}

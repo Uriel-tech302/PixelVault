@@ -1,0 +1,32 @@
+meta {
+  name: Login usuario
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "usuario@pixelvault.com",
+    "password": "{{usuarioPassword}}"
+  }
+}
+
+script:post-response {
+  bru.setVar("usuarioToken", res.body.token);
+}
+
+tests {
+  test("Responde 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  test("Devuelve token JWT y rol USUARIO", function () {
+    expect(res.body.token).to.be.a("string");
+    expect(res.body.usuario.rol).to.equal("USUARIO");
+  });
+}

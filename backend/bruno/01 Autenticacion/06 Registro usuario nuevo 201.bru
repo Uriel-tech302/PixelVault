@@ -1,0 +1,36 @@
+meta {
+  name: Registro usuario nuevo 201
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/auth/register
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "username": "{{nuevoUser}}",
+    "email": "{{nuevoEmail}}",
+    "password": "Bruno2026!"
+  }
+}
+
+script:pre-request {
+  const s = String(Date.now()).slice(-8);
+  bru.setVar("nuevoUser", "bruno" + s);
+  bru.setVar("nuevoEmail", "bruno" + s + "@example.com");
+}
+
+tests {
+  test("Responde 201", function () {
+    expect(res.status).to.equal(201);
+  });
+  test("Rol USUARIO y sin password en la respuesta", function () {
+    expect(res.body.rol).to.equal("USUARIO");
+    expect(res.body).to.not.have.property("password");
+    expect(res.body).to.not.have.property("passwordHash");
+  });
+}

@@ -1,0 +1,21 @@
+meta {
+  name: Logout 204
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/api/auth/logout
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{nuevoToken}}
+}
+
+tests {
+  test("Responde 204", function () {
+    expect(res.status).to.equal(204);
+  });
+}

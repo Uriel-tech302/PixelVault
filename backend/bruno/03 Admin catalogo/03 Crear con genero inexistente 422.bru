@@ -1,0 +1,30 @@
+meta {
+  name: Crear con genero inexistente 422
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/juegos
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+    "titulo": "Prueba 422",
+    "generoIds": [
+      999999999
+    ]
+  }
+}
+
+tests {
+  test("Responde 422", function () {
+    expect(res.status).to.equal(422);
+  });
+}

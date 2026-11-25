@@ -1,0 +1,29 @@
+meta {
+  name: Crear resena 200
+  type: http
+  seq: 1
+}
+
+put {
+  url: {{baseUrl}}/api/biblioteca/{{itemId}}/resena
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+body:json {
+  {
+    "texto": "Resena de prueba BrunoTest",
+    "contieneSpoilers": false,
+    "visibilidad": "PUBLICA"
+  }
+}
+
+tests {
+  test("Responde 200 o 201", function () {
+    expect([200, 201]).to.include(res.status);
+  });
+}

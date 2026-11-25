@@ -1,0 +1,25 @@
+meta {
+  name: Agregar datos invalidos 400
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/biblioteca
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+body:json {
+  {}
+}
+
+tests {
+  test("Responde 400", function () {
+    expect(res.status).to.equal(400);
+  });
+}

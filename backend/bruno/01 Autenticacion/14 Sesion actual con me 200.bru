@@ -1,0 +1,21 @@
+meta {
+  name: Sesion actual con me 200
+  type: http
+  seq: 14
+}
+
+get {
+  url: {{baseUrl}}/api/auth/me
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+tests {
+  test("Responde 200", function () {
+    expect(res.status).to.equal(200);
+  });
+}

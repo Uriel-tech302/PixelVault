@@ -1,0 +1,21 @@
+meta {
+  name: Tamano de pagina invalido 400
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/api/juegos?size=500
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+tests {
+  test("Responde 400", function () {
+    expect(res.status).to.equal(400);
+  });
+}

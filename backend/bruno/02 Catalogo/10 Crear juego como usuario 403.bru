@@ -1,0 +1,30 @@
+meta {
+  name: Crear juego como usuario 403
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/api/juegos
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+body:json {
+  {
+    "titulo": "No deberia crearse",
+    "generoIds": [
+      {{generoId}}
+    ]
+  }
+}
+
+tests {
+  test("Responde 403", function () {
+    expect(res.status).to.equal(403);
+  });
+}

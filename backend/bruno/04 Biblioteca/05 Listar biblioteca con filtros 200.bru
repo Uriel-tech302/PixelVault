@@ -1,0 +1,25 @@
+meta {
+  name: Listar biblioteca con filtros 200
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/biblioteca?page=0&size=5&estado=JUGANDO
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+tests {
+  test("Responde 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  test("Respuesta paginada", function () {
+    expect(res.body).to.have.property("contenido");
+    expect(res.body).to.have.property("totalPaginas");
+  });
+}
