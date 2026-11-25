@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import './Login.css';
 import { useAuth } from '../context/AuthContext';
-// Asegúrate de importar la imagen correctamente. Ajusta la ruta si es necesario.
 import heroImage from '../assets/hollow-knight.jpg';
-import pixelLogo from '../assets/pixel-logo.svg';
 import lockIcon from '../assets/candado.svg';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginApi } from '../services/authService';
@@ -54,7 +52,7 @@ export default function Login() {
 
     if (validateForm()) {
       setIsLoading(true);
-    try {
+      try {
         const { token, user } = await loginApi({
           email: formData.email,
           password: formData.password,
@@ -77,8 +75,6 @@ export default function Login() {
 
   return (
     <div className="login-wrapper">
-
-      {/* Header externo superior (Logo y estado) */}
       <header className="login-header-container">
         <div className="login-header-top">
           <div className="logo">
@@ -93,19 +89,16 @@ export default function Login() {
         </div>
       </header>
 
-      {/* --- NUEVO CONTENEDOR PARA LA CONSOLA --- */}
-      {/* Esto asegura que se alinee con la caja principal de abajo */}
       <div className="console-header-wrapper">
         <div className="login-header-bottom">
-          <span className="console-path">C:\PIXELVAULT\AUTH&gt; <span className="console-command">inicio</span></span>
+          <span className="console-path">
+            C:\PIXELVAULT\AUTH&gt; <span className="console-command">inicio</span>
+          </span>
           <span className="console-info">ARCHIVO PERSONAL DE JUEGOS</span>
         </div>
       </div>
 
-      {/* Contenedor Principal (La Bóveda) */}
       <main className="login-container">
-
-        {/* Barra superior de la caja */}
         <div className="box-header">
           <div className="box-header-left">
             <img src={lockIcon} alt="Candado" className="lock-icon-img" /> Punto de acceso
@@ -116,7 +109,6 @@ export default function Login() {
         </div>
 
         <div className="box-content">
-          {/* Columna Izquierda: Imagen */}
           <section className="login-hero">
             <div className="hero-tag">
               <span className="tag-highlight">P1</span> ¿LISTO PARA SEGUIR?
@@ -136,13 +128,10 @@ export default function Login() {
               <h2>Cada crédito</h2>
               <h2>final.</h2>
               <p className="hero-subtitle">Todo en una bóveda.</p>
-              <div className="hero-footer-text">
-                EN LA BÓVEDA / HOLLOW KNIGHT
-              </div>
+              <div className="hero-footer-text">EN LA BÓVEDA / HOLLOW KNIGHT</div>
             </div>
           </section>
 
-          {/* Columna Derecha: Formulario */}
           <section className="login-form-section">
             <div className="form-header">
               <h1>Bienvenido de vuelta.</h1>
@@ -150,7 +139,6 @@ export default function Login() {
             </div>
 
             <form onSubmit={handleSubmit} noValidate>
-
               <div className="input-group">
                 <label>01 / CORREO ELECTRÓNICO</label>
                 <input
@@ -183,24 +171,15 @@ export default function Login() {
                   <span className="checkmark"></span>
                   Recuérdame
                 </label>
-                <Link to="/recuperar" className="forgot-password">¿Olvidaste tu contraseña?</Link>
+                <Link to="/recuperar" className="forgot-password">
+                  ¿Olvidaste tu contraseña?
+                </Link>
               </div>
 
               {errors.submit && <div className="submit-error">{errors.submit}</div>}
 
               <button type="submit" className="btn-primary" disabled={isLoading}>
                 {isLoading ? 'INICIANDO...' : 'Iniciar sesión ➔'}
-              </button>
-
-              <div className="divider">
-                <span>O CONTINÚA CON</span>
-              </div>
-
-              <button type="button" className="btn-steam">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.454 1.012zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z" />
-                </svg>
-                <span>Continúa con Steam</span>
               </button>
 
               <div className="register-link">
@@ -210,23 +189,18 @@ export default function Login() {
           </section>
         </div>
 
-        {/* Barra inferior dentro de la caja */}
         <div className="box-footer">
           <div className="box-footer-left">
             <span className="highlight-green">■</span> CONEXIÓN SEGURA
           </div>
-          <div className="box-footer-right">
-            TU ARCHIVO DE GUARDADO ESTÁ ESPERANDO.
-          </div>
+          <div className="box-footer-right">TU ARCHIVO DE GUARDADO ESTÁ ESPERANDO.</div>
         </div>
       </main>
 
-      {/* Frase centrada debajo de la bóveda */}
       <div className="login-tagline">
         LOS BUENOS JUEGOS MERECEN UNA PARTIDA GUARDADA.
       </div>
 
-      {/* Footer inferior de lado a lado */}
       <footer className="login-footer">
         <div className="footer-left">
           <span className="footer-status">■ SISTEMA EN LÍNEA</span>
