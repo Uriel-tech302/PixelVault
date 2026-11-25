@@ -1,0 +1,50 @@
+spring.application.name=pixelvault
+
+# --- Servidor ---------------------------------------------------------------
+# PORT: puerto HTTP del backend (por defecto 2727).
+server.port=${PORT:2727}
+
+# --- Base de datos (MySQL 8) ------------------------------------------------
+# DB_URL:  jdbc:mysql://localhost:3306/pixelvault
+# DB_USER: usuario de MySQL (por defecto pixelAdmin)
+# DB_PASS: OBLIGATORIA. Contrasena del usuario de MySQL.
+spring.datasource.url=${DB_URL:jdbc:mysql://localhost:3306/pixelvault}
+spring.datasource.username=${DB_USER:pixelAdmin}
+spring.datasource.password=${DB_PASS}
+
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.open-in-view=false
+spring.jpa.properties.hibernate.default_batch_fetch_size=50
+spring.flyway.enabled=true
+
+# --- JWT --------------------------------------------------------------------
+app.jwt.secret=${JWT_SECRET}
+app.jwt.expiration-ms=${JWT_EXPIRATION_MS:7200000}
+app.jwt.remember-expiration-ms=${JWT_REMEMBER_EXPIRATION_MS:2592000000}
+
+# --- CORS y enlaces al frontend ---------------------------------------------
+app.cors.allowed-origins=${CORS_ORIGINS:http://localhost:5173}
+app.frontend-url=${APP_FRONTEND_URL:http://localhost:5173}
+
+# --- Cuentas de prueba (DataSeeder) -----------------------------------------
+app.seed.admin-password=${SEED_ADMIN_PASSWORD:}
+app.seed.moderador-password=${SEED_MODERADOR_PASSWORD:}
+app.seed.usuario-password=${SEED_USUARIO_PASSWORD:}
+
+# APP_SEED_BIBLIOTECA_DEMO: true siembra bibliotecas y reseñas de demostracion.
+
+
+# --- Correo (Postfix local + JavaMailSender) --------------------------------
+app.mail.host=${MAIL_HOST:}
+app.mail.port=${MAIL_PORT:25}
+app.mail.user=${MAIL_USER:}
+app.mail.pass=${MAIL_PASS:}
+app.mail.from=${MAIL_FROM:no-reply@localhost}
+app.mail.starttls=${MAIL_STARTTLS:false}
+
+# --- Variables que el codigo lee directamente del entorno -------------------
+#       $env:STEAM_API_KEY = 'clave_de_steam'
+#       $env:TWILIO_ACCOUNT_SID = 'ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+#       $env:TWILIO_AUTH_TOKEN = 'token_de_twilio'
+#       $env:TWILIO_FROM = '+15551234567'
+#       $env:TWILIO_WHATSAPP_FROM = 'whatsapp:+14155238886'

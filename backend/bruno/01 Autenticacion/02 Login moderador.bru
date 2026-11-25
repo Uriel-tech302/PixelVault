@@ -1,0 +1,32 @@
+meta {
+  name: Login moderador
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "moderador@pixelvault.com",
+    "password": "{{moderadorPassword}}"
+  }
+}
+
+script:post-response {
+  bru.setVar("moderadorToken", res.body.token);
+}
+
+tests {
+  test("Responde 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  test("Devuelve token JWT y rol MODERADOR", function () {
+    expect(res.body.token).to.be.a("string");
+    expect(res.body.usuario.rol).to.equal("MODERADOR");
+  });
+}

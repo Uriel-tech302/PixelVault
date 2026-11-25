@@ -1,0 +1,25 @@
+meta {
+  name: Resumen de biblioteca 200
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/api/biblioteca/resumen
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+tests {
+  test("Responde 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  test("Trae totales y desglose por estado", function () {
+    expect(res.body).to.have.property("totalJuegos");
+    expect(res.body).to.have.property("porEstado");
+  });
+}

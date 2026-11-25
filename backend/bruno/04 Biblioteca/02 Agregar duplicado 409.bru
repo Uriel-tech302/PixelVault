@@ -1,0 +1,30 @@
+meta {
+  name: Agregar duplicado 409
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/biblioteca
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+body:json {
+  {
+    "juegoId": {{juegoNuevoId}},
+    "plataformaId": {{plataformaId}},
+    "estado": "JUGANDO",
+    "horasJugadas": 0
+  }
+}
+
+tests {
+  test("Responde 409", function () {
+    expect(res.status).to.equal(409);
+  });
+}

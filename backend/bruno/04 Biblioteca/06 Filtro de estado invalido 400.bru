@@ -1,0 +1,21 @@
+meta {
+  name: Filtro de estado invalido 400
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/biblioteca?estado=XYZ
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+tests {
+  test("Responde 400", function () {
+    expect(res.status).to.equal(400);
+  });
+}

@@ -1,0 +1,27 @@
+meta {
+  name: Ocultar resena
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{baseUrl}}/api/moderacion/resenas/{{resenaId}}/ocultar
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{moderadorToken}}
+}
+
+body:json {
+  {
+    "motivo": "Prueba de moderacion Bruno"
+  }
+}
+
+tests {
+  test("Responde 200 o 204", function () {
+    expect([200, 204]).to.include(res.status);
+  });
+}

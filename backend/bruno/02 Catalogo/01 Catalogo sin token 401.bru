@@ -1,0 +1,17 @@
+meta {
+  name: Catalogo sin token 401
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/juegos
+  body: none
+  auth: none
+}
+
+tests {
+  test("Responde 401", function () {
+    expect(res.status).to.equal(401);
+  });
+}

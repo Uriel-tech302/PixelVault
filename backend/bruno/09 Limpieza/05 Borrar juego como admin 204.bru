@@ -1,0 +1,21 @@
+meta {
+  name: Borrar juego como admin 204
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/api/juegos/{{juegoNuevoId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+tests {
+  test("Responde 204", function () {
+    expect(res.status).to.equal(204);
+  });
+}

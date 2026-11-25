@@ -1,0 +1,33 @@
+meta {
+  name: Editar entrada 200
+  type: http
+  seq: 8
+}
+
+put {
+  url: {{baseUrl}}/api/biblioteca/{{itemId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+body:json {
+  {
+    "estado": "COMPLETADO",
+    "horasJugadas": 12.5,
+    "ultimaSesion": "2026-11-20",
+    "puntuacion": 4
+  }
+}
+
+tests {
+  test("Responde 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  test("Estado actualizado", function () {
+    expect(res.body.estado).to.equal("COMPLETADO");
+  });
+}

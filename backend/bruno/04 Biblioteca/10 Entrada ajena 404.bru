@@ -1,0 +1,21 @@
+meta {
+  name: Entrada ajena 404
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{baseUrl}}/api/biblioteca/{{itemId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+tests {
+  test("Responde 404", function () {
+    expect(res.status).to.equal(404);
+  });
+}

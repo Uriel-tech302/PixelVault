@@ -1,0 +1,38 @@
+meta {
+  name: Crear juego como admin 201
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/juegos
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+    "titulo": "Juego Bruno {{$timestamp}}",
+    "descripcion": "Creado por la coleccion de pruebas.",
+    "anioLanzamiento": 2024,
+    "desarrollador": "Equipo Bruno",
+    "portadaUrl": "https://example.com/portada.jpg",
+    "generoIds": [
+      {{generoId}}
+    ]
+  }
+}
+
+script:post-response {
+  bru.setVar("juegoNuevoId", res.body.id);
+}
+
+tests {
+  test("Responde 201", function () {
+    expect(res.status).to.equal(201);
+  });
+}

@@ -30,7 +30,6 @@ public class SteamClient {
     private static final Pattern VISIBILIDAD = Pattern.compile("\"communityvisibilitystate\"\\s*:\\s*(\\d+)");
     private static final Pattern NOMBRE = Pattern.compile("\"personaname\"\\s*:\\s*\"((?:[^\"\\\\]|\\\\.)*)\"");
     private static final Pattern CERO_JUEGOS = Pattern.compile("\"game_count\"\\s*:\\s*0\\b");
-    // Un objeto { ... } de la lista de juegos; tolera llaves dentro de textos entre comillas.
     private static final Pattern OBJETO = Pattern.compile("\\{(?:[^{}\"]|\"(?:[^\"\\\\]|\\\\.)*\")*}");
     private static final Pattern JUEGO_NOMBRE = Pattern.compile("\"name\"\\s*:\\s*\"((?:[^\"\\\\]|\\\\.)*)\"");
     private static final Pattern APPID = Pattern.compile("\"appid\"\\s*:\\s*(\\d+)");

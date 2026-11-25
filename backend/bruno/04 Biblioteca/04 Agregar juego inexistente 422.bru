@@ -1,0 +1,30 @@
+meta {
+  name: Agregar juego inexistente 422
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/biblioteca
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+body:json {
+  {
+    "juegoId": 999999999,
+    "plataformaId": {{plataformaId}},
+    "estado": "JUGANDO",
+    "horasJugadas": 0
+  }
+}
+
+tests {
+  test("Responde 422", function () {
+    expect(res.status).to.equal(422);
+  });
+}

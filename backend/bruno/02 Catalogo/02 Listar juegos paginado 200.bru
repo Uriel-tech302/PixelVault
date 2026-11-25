@@ -1,0 +1,32 @@
+meta {
+  name: Listar juegos paginado 200
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/juegos?page=0&size=5
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{usuarioToken}}
+}
+
+script:post-response {
+  if (res.body.contenido && res.body.contenido.length) {
+    bru.setVar("juegoId", res.body.contenido[0].id);
+  }
+}
+
+tests {
+  test("Responde 200", function () {
+    expect(res.status).to.equal(200);
+  });
+  test("Respuesta paginada", function () {
+    expect(res.body).to.have.property("contenido");
+    expect(res.body).to.have.property("totalElementos");
+    expect(res.body.contenido.length).to.be.at.most(5);
+  });
+}

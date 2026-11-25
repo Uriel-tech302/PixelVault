@@ -1,0 +1,21 @@
+meta {
+  name: Listar usuarios como admin 200
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/admin/usuarios?page=0&size=5
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+tests {
+  test("Responde 200", function () {
+    expect(res.status).to.equal(200);
+  });
+}
