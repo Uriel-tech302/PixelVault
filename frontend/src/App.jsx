@@ -11,6 +11,7 @@ import AddGame from './pages/AddGame';
 import Profile from './pages/Profile';
 import AdminPanel from './pages/AdminPanel';
 import ResetPassword from './pages/ResetPassword';
+import ModerationPanel from './pages/ModerationPanel';
 export default function App() {
   return (
     <AuthProvider>
@@ -53,6 +54,14 @@ export default function App() {
             element={
               <ProtectedRoute allowedRoles={['ADMIN']}>
                 <AdminPanel />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/moderacion"
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN', 'MODERADOR']}>
+                <ModerationPanel />
               </ProtectedRoute>
             }
           />

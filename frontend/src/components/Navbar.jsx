@@ -69,7 +69,15 @@ export default function Navbar({ showAddButton = true, searchTerm = '', onSearch
                ⚙ Panel Admin
               </Link>
               )}
-
+              {(user?.role === 'ADMIN' || user?.role === 'MODERADOR') && (
+              <Link
+                to="/moderacion"
+                className="dropdown-item-link"
+                onClick={() => setDropdownOpen(false)}
+              >
+                🛡 Moderación
+              </Link>
+              )}
               <Link
                 to="/perfil"
                 className="dropdown-item-link"
