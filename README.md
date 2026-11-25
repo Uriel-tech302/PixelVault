@@ -20,8 +20,8 @@
 * **Aplicación en producción (HTTPS):** `https://[TU_DOMINIO_O_IP]` *(pendiente de despliegue final)*
 * **URL Base de la API (Producción):** `https://[TU_DOMINIO_O_IP]/api`
 * **URL Base de la API (Local):** `http://localhost:2727/api` *(configurable mediante `PORT`)*
-* **Tablero de GitHub Projects:** `[PEGAR_ENLACE_GITHUB_PROJECTS]`
-* **Prototipo Navegable en Figma:** `[PEGAR_ENLACE_FIGMA]`
+* **Tablero de GitHub Projects:** `[https://github.com/users/Uriel-tech302/projects/3]`
+* **Prototipo Navegable en Figma:** `https://www.figma.com/proto/KjpV1Zpm1YZWyqYqksQEoi/Tarea?node-id=21-81&t=3QqDub9YTm2iGX1U-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=21%3A81&show-proto-sidebar=1`
 
 ---
 
