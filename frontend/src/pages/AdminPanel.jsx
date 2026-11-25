@@ -1,47 +1,122 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ConfirmModal from '../components/ConfirmModal';
+import { adminService } from '../services/adminService';
 import './Inventory.css';
 import './GameDetail.css';
 import './AdminPanel.css';
 
-const initialUsers = [
-  { id: 1, name: 'admin', email: 'admin@pixelvault.com', role: 'ADMIN', status: 'ACTIVO' },
-  { id: 2, name: 'moderador', email: 'moderador@pixelvault.com', role: 'MODERADOR', status: 'ACTIVO' },
-  { id: 3, name: 'usuario', email: 'usuario@pixelvault.com', role: 'USUARIO', status: 'ACTIVO' },
-  { id: 4, name: 'Uriel_Dev', email: 'uriel@pixelvault.com', role: 'USUARIO', status: 'ACTIVO' },
-  { id: 5, name: 'Kevin_Back', email: 'kevin@pixelvault.com', role: 'MODERADOR', status: 'INACTIVO' }
-];
+const normalizeUser = (u) => {
+  const isActive =
+    typeof u.activo === 'boolean'
+      ? u.activo
+      : u.status
+        ? u.status.toUpperCase() === 'ACTIVO'
+        : true;
+
+  return {
+    id: u.id,
+    name: u.nombre ?? u.username ?? u.name ?? 'Sin nombre',
+    email: u.correo ?? u.email ?? '',
+    role: (u.rol ?? u.role ?? 'USUARIO').toUpperCase(),
+    activo: isActive,
+    status: isActive ? 'ACTIVO' : 'INACTIVO'
+  };
+};
 
 export default function AdminPanel() {
-  const [users, setUsers] = useState(initialUsers);
+  const [users, setUsers] = useState([]);
   const [roleFilter, setRoleFilter] = useState('TODOS');
-  const [userToDelete, setUserToDelete] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [userToDeactivate, setUserToDeactivate] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  const loadUsers = async () => {
+    setLoading(true);
+    setErrorMsg('');
+    try {
+      const data = await adminService.getUsuarios({ page: 0, size: 100 });
+      const rawList = Array.isArray(data)
+        ? data
+        : data.contenido ?? data.items ?? data.content ?? [];
+      setUsers(rawList.map(normalizeUser));
+    } catch (err) {
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        'No se pudo cargar la lista de usuarios.';
+      setErrorMsg(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadUsers();
+  }, []);
 
   const filteredUsers =
     roleFilter === 'TODOS'
       ? users
       : users.filter((u) => u.role === roleFilter);
 
-  const handleRoleChange = (userId, newRole) => {
-    // Listo para conectar cuando Kevin suba /api/admin/usuarios:
-    // await api.patch(`/admin/usuarios/${userId}/rol`, { rol: newRole });
-    setUsers((prev) =>
-      prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u))
-    );
+  const handleRoleChange = async (userId, newRole) => {
+    setErrorMsg('');
+    try {
+      const updated = await adminService.cambiarRol(userId, newRole);
+      const normalized = normalizeUser(updated);
+      setUsers((prev) =>
+        prev.map((u) => (u.id === userId ? normalized : u))
+      );
+    } catch (err) {
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        'No se pudo actualizar el rol del usuario.';
+      setErrorMsg(msg);
+    }
   };
 
-  const handleConfirmDelete = async () => {
-    if (!userToDelete) return;
-    setIsProcessing(true);
+  const handleToggleActive = async (user) => {
+    setErrorMsg('');
     try {
-      // await api.delete(`/admin/usuarios/${userToDelete.id}`);
-      await new Promise((resolve) => setTimeout(resolve, 600));
-      setUsers((prev) => prev.filter((u) => u.id !== userToDelete.id));
-      setUserToDelete(null);
+      const updated = await adminService.cambiarEstado(user.id, !user.activo);
+      const normalized = normalizeUser(updated);
+      setUsers((prev) =>
+        prev.map((u) => (u.id === user.id ? normalized : u))
+      );
+    } catch (err) {
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        'No se pudo cambiar el estado del usuario.';
+      setErrorMsg(msg);
+    }
+  };
+
+  const handleConfirmDeactivate = async () => {
+    if (!userToDeactivate) return;
+    setIsProcessing(true);
+    setErrorMsg('');
+    try {
+      await adminService.desactivarUsuario(userToDeactivate.id);
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.id === userToDeactivate.id
+            ? { ...u, activo: false, status: 'INACTIVO' }
+            : u
+        )
+      );
+      setUserToDeactivate(null);
+    } catch (err) {
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        'No se pudo desactivar la cuenta.';
+      setErrorMsg(msg);
     } finally {
       setIsProcessing(false);
     }
@@ -84,6 +159,12 @@ export default function AdminPanel() {
           </div>
         </header>
 
+        {errorMsg && (
+          <div className="form-error-banner" style={{ marginBottom: '1rem' }}>
+            {errorMsg}
+          </div>
+        )}
+
         <div className="inventory-tabs">
           {['TODOS', 'ADMIN', 'MODERADOR', 'USUARIO'].map((role) => (
             <button
@@ -97,65 +178,79 @@ export default function AdminPanel() {
         </div>
 
         <div className="admin-table-wrapper">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>NOMBRE</th>
-                <th>CORREO</th>
-                <th>ROL</th>
-                <th>ESTADO</th>
-                <th>ACCIONES</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredUsers.map((u) => (
-                <tr key={u.id}>
-                  <td>#{String(u.id).padStart(3, '0')}</td>
-                  <td>{u.name}</td>
-                  <td>{u.email}</td>
-                  <td>
-                    <select
-                      className="admin-role-select"
-                      value={u.role}
-                      onChange={(e) => handleRoleChange(u.id, e.target.value)}
-                    >
-                      <option value="ADMIN">ADMIN</option>
-                      <option value="MODERADOR">MODERADOR</option>
-                      <option value="USUARIO">USUARIO</option>
-                    </select>
-                  </td>
-                  <td>
-                    <span className={`admin-status ${u.status.toLowerCase()}`}>
-                      {u.status}
-                    </span>
-                  </td>
-                  <td>
-                    <button
-                      type="button"
-                      className="btn-admin-delete"
-                      onClick={() => setUserToDelete(u)}
-                    >
-                      Eliminar
-                    </button>
-                  </td>
+          {loading ? (
+            <p style={{ padding: '2rem', textAlign: 'center' }}>Cargando usuarios...</p>
+          ) : (
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>NOMBRE</th>
+                  <th>CORREO</th>
+                  <th>ROL</th>
+                  <th>ESTADO</th>
+                  <th>ACCIONES</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredUsers.map((u) => (
+                  <tr key={u.id}>
+                    <td>#{String(u.id).padStart(3, '0')}</td>
+                    <td>{u.name}</td>
+                    <td>{u.email}</td>
+                    <td>
+                      <select
+                        className="admin-role-select"
+                        value={u.role}
+                        onChange={(e) => handleRoleChange(u.id, e.target.value)}
+                      >
+                        <option value="ADMIN">ADMIN</option>
+                        <option value="MODERADOR">MODERADOR</option>
+                        <option value="USUARIO">USUARIO</option>
+                      </select>
+                    </td>
+                    <td>
+                      <span className={`admin-status ${u.status.toLowerCase()}`}>
+                        {u.status}
+                      </span>
+                    </td>
+                    <td>
+                      {u.activo ? (
+                        <button
+                          type="button"
+                          className="btn-admin-delete"
+                          onClick={() => setUserToDeactivate(u)}
+                        >
+                          Desactivar
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          className="tab-btn"
+                          onClick={() => handleToggleActive(u)}
+                        >
+                          Reactivar
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </main>
 
       <ConfirmModal
-        isOpen={Boolean(userToDelete)}
-        title="ELIMINAR USUARIO"
-        message={`¿Seguro que deseas eliminar la cuenta de "${userToDelete?.name}" (${userToDelete?.email})?`}
-        confirmText="Sí, eliminar"
+        isOpen={Boolean(userToDeactivate)}
+        title="DESACTIVAR USUARIO"
+        message={`¿Seguro que deseas desactivar la cuenta de "${userToDeactivate?.name}" (${userToDeactivate?.email})? Se conservarán su biblioteca y reseñas.`}
+        confirmText="Sí, desactivar"
         cancelText="Cancelar"
         isDanger={true}
         isLoading={isProcessing}
-        onConfirm={handleConfirmDelete}
-        onCancel={() => setUserToDelete(null)}
+        onConfirm={handleConfirmDeactivate}
+        onCancel={() => setUserToDeactivate(null)}
       />
 
       <Footer />
