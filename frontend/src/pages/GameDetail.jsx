@@ -7,6 +7,7 @@ import './GameDetail.css';
 import HeartRating, { ratingLabels } from '../components/HeartRating';
 import ConfirmModal from '../components/ConfirmModal';
 import { getGameById, updateLibraryGame, deleteLibraryGame } from '../services/gameService';
+import { resenaService } from '../services/resenaService';
 
 const statusMessages = {
   Completado: 'MISIÓN COMPLETADA. RECUERDOS GUARDADOS.',
@@ -16,6 +17,14 @@ const statusMessages = {
 
 const formatStatus = (raw) =>
   raw ? raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase() : 'Jugando';
+
+const extractError = (error, fallback) => {
+  const data = error.response?.data;
+  if (data?.errores && typeof data.errores === 'object') {
+    return Object.values(data.errores).join(' · ');
+  }
+  return data?.mensaje || data?.message || data?.error || fallback;
+};
 
 export default function GameDetail() {
   const { id } = useParams();
@@ -27,11 +36,35 @@ export default function GameDetail() {
 
   const [rating, setRating] = useState(0);
   const [status, setStatus] = useState('Jugando');
+
+  // Estado de la reseña personal
   const [review, setReview] = useState('');
+  const [contieneSpoilers, setContieneSpoilers] = useState(false);
+  const [visibilidad, setVisibilidad] = useState('PUBLICA');
+  const [hasSavedReview, setHasSavedReview] = useState(false);
+
+  // Reseñas públicas del juego
+  const [publicReviews, setPublicReviews] = useState([]);
+  const [revealedSpoilers, setRevealedSpoilers] = useState({});
+
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeletingReview, setIsDeletingReview] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [savedNotice, setSavedNotice] = useState(false);
+
+  const loadPublicReviews = async (juegoId) => {
+    if (!juegoId) return;
+    try {
+      const pageData = await resenaService.getResenasPublicas(juegoId, { page: 0, size: 20 });
+      const list = Array.isArray(pageData)
+        ? pageData
+        : pageData.contenido ?? pageData.content ?? pageData.items ?? [];
+      setPublicReviews(list);
+    } catch {
+      setPublicReviews([]);
+    }
+  };
 
   useEffect(() => {
     let active = true;
@@ -45,14 +78,27 @@ export default function GameDetail() {
         setGame(data);
         setRating(data.rating || 0);
         setStatus(formatStatus(data.status));
-        setReview(data.review || '');
+
+        const initialText =
+          typeof data.review === 'string'
+            ? data.review
+            : data.resena?.texto ?? data.review?.texto ?? '';
+        setReview(initialText);
+        setContieneSpoilers(
+          Boolean(data.contieneSpoilers ?? data.resena?.contieneSpoilers ?? false)
+        );
+        setVisibilidad(
+          data.visibilidad ?? data.resena?.visibilidad ?? 'PUBLICA'
+        );
+        setHasSavedReview(Boolean(initialText.trim()));
+
+        const juegoId = data.juegoId ?? data.gameId ?? data.juego?.id;
+        if (juegoId) {
+          loadPublicReviews(juegoId);
+        }
       } catch (error) {
         if (!active) return;
-        const msg =
-          error.response?.data?.mensaje ||
-          error.response?.data?.message ||
-          'No se pudo cargar este juego desde la bóveda.';
-        setErrorMsg(msg);
+        setErrorMsg(extractError(error, 'No se pudo cargar este juego desde la bóveda.'));
       } finally {
         if (active) setIsLoading(false);
       }
@@ -80,15 +126,42 @@ export default function GameDetail() {
         rating: rating > 0 ? rating : null
       });
       setGame(updated);
+
+      if (review.trim()) {
+        await resenaService.guardarResena(game.id, {
+          texto: review.trim(),
+          contieneSpoilers,
+          visibilidad
+        });
+        setHasSavedReview(true);
+        const juegoId = updated.juegoId ?? updated.gameId ?? game.juegoId ?? game.gameId;
+        if (juegoId) loadPublicReviews(juegoId);
+      }
+
       setSavedNotice(true);
     } catch (error) {
-      const msg =
-        error.response?.data?.mensaje ||
-        error.response?.data?.message ||
-        'Error al guardar los cambios.';
-      setErrorMsg(msg);
+      setErrorMsg(extractError(error, 'Error al guardar los cambios.'));
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDeleteReview = async () => {
+    if (!game) return;
+    setIsDeletingReview(true);
+    setErrorMsg('');
+    setSavedNotice(false);
+    try {
+      await resenaService.eliminarResenaPropia(game.id);
+      setReview('');
+      setContieneSpoilers(false);
+      setHasSavedReview(false);
+      const juegoId = game.juegoId ?? game.gameId ?? game.juego?.id;
+      if (juegoId) loadPublicReviews(juegoId);
+    } catch (error) {
+      setErrorMsg(extractError(error, 'No se pudo eliminar tu reseña.'));
+    } finally {
+      setIsDeletingReview(false);
     }
   };
 
@@ -100,11 +173,7 @@ export default function GameDetail() {
       setShowDeleteModal(false);
       navigate('/inventario');
     } catch (error) {
-      const msg =
-        error.response?.data?.mensaje ||
-        error.response?.data?.message ||
-        'No se pudo eliminar el juego.';
-      setErrorMsg(msg);
+      setErrorMsg(extractError(error, 'No se pudo eliminar el juego.'));
       setShowDeleteModal(false);
     } finally {
       setIsDeleting(false);
@@ -234,7 +303,28 @@ export default function GameDetail() {
               <div className="review-section">
                 <div className="review-header">
                   <label className="editor-label">03 / RESEÑA PERSONAL</label>
-                  <span className="draft-indicator">● BORRADOR CARGADO</span>
+                  <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                    <select
+                      className="status-select"
+                      style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}
+                      value={visibilidad}
+                      onChange={(e) => setVisibilidad(e.target.value)}
+                    >
+                      <option value="PUBLICA">🌐 Pública</option>
+                      <option value="PRIVADA">🔒 Privada</option>
+                    </select>
+                    {hasSavedReview && (
+                      <button
+                        type="button"
+                        className="btn-cancel"
+                        style={{ padding: '0.25rem 0.6rem', fontSize: '0.75rem' }}
+                        onClick={handleDeleteReview}
+                        disabled={isDeletingReview}
+                      >
+                        {isDeletingReview ? 'Borrando...' : 'Borrar reseña'}
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 <div className="terminal-editor-box">
@@ -244,6 +334,7 @@ export default function GameDetail() {
                   <textarea
                     className="terminal-textarea"
                     rows="9"
+                    maxLength={2000}
                     value={review}
                     onChange={(e) => setReview(e.target.value)}
                     placeholder="Escribe tus recuerdos, logros o notas sobre esta partida..."
@@ -254,8 +345,15 @@ export default function GameDetail() {
                 </div>
 
                 <div className="review-meta-row">
-                  <span>TEXTO PLANO / SIN SPOILERS MARCADOS</span>
-                  <span>{review.length} CAR</span>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={contieneSpoilers}
+                      onChange={(e) => setContieneSpoilers(e.target.checked)}
+                    />
+                    <span>CONTIENE SPOILERS</span>
+                  </label>
+                  <span>{review.length} / 2000 CAR</span>
                 </div>
               </div>
 
@@ -265,7 +363,7 @@ export default function GameDetail() {
 
               {savedNotice && (
                 <div className="save-success-banner">
-                  ✓ Datos de guardado actualizados correctamente en tu bóveda.
+                  ✓ Datos de guardado y reseña actualizados correctamente en tu bóveda.
                 </div>
               )}
             </section>
@@ -302,6 +400,67 @@ export default function GameDetail() {
             </div>
           </div>
         </form>
+
+        {/* Reseñas públicas de la comunidad */}
+        <section className="save-point-card" style={{ marginTop: '2rem' }}>
+          <div className="box-header">
+            <div className="box-header-left">
+              <span className="highlight-green">💬</span> Reseñas de la comunidad
+            </div>
+            <div className="box-header-right">
+              TOTAL [ <span className="highlight-green">{publicReviews.length}</span> ]
+            </div>
+          </div>
+
+          <div style={{ padding: '1.5rem' }}>
+            {publicReviews.length === 0 ? (
+              <p className="story-note-desc">
+                Aún no hay reseñas públicas para este juego. ¡Sé el primero en compartir la tuya!
+              </p>
+            ) : (
+              <div style={{ display: 'grid', gap: '1rem' }}>
+                {publicReviews.map((r) => {
+                  const isHiddenSpoiler = r.contieneSpoilers && !revealedSpoilers[r.id];
+                  return (
+                    <article key={r.id} className="story-note-box">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                        <strong className="story-note-title">
+                          {r.autor ?? r.username ?? 'Jugador'}
+                        </strong>
+                        <span className="story-note-desc">
+                          {r.calificacion ? `♥ ${r.calificacion}/5 · ` : ''}
+                          {r.contieneSpoilers ? '⚠ SPOILERS' : 'SIN SPOILERS'}
+                        </span>
+                      </div>
+
+                      {isHiddenSpoiler ? (
+                        <div>
+                          <p className="story-note-desc" style={{ marginBottom: '0.5rem' }}>
+                            Esta reseña está marcada con spoilers.
+                          </p>
+                          <button
+                            type="button"
+                            className="btn-cancel"
+                            style={{ padding: '0.3rem 0.7rem', fontSize: '0.8rem' }}
+                            onClick={() =>
+                              setRevealedSpoilers((prev) => ({ ...prev, [r.id]: true }))
+                            }
+                          >
+                            Mostrar reseña
+                          </button>
+                        </div>
+                      ) : (
+                        <p className="story-note-desc" style={{ whiteSpace: 'pre-wrap' }}>
+                          {r.texto}
+                        </p>
+                      )}
+                    </article>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </section>
 
         <div className="login-tagline">
           LOS BUENOS JUEGOS MERECEN UNA PARTIDA GUARDADA.
