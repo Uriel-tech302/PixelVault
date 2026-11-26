@@ -4,7 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import heroImage from '../assets/hollow-knight.jpg';
 import lockIcon from '../assets/candado.svg';
 import { Link, useNavigate } from 'react-router-dom';
-import { loginApi } from '../services/authService';
+import { GoogleLogin } from '@react-oauth/google';
+import { loginApi, googleLoginApi } from '../services/authService';
 
 export default function Login() {
   const { login } = useAuth();
@@ -70,6 +71,24 @@ export default function Login() {
       } finally {
         setIsLoading(false);
       }
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setIsLoading(true);
+    setErrors({});
+    try {
+      const { token, user } = await googleLoginApi(credentialResponse.credential);
+      login(user, token);
+      navigate(user.role === 'ADMIN' ? '/admin' : '/inventario');
+    } catch (error) {
+      const backendMsg =
+        error.response?.data?.mensaje ||
+        error.response?.data?.message ||
+        'No se pudo iniciar sesión con Google.';
+      setErrors({ submit: backendMsg });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -181,6 +200,20 @@ export default function Login() {
               <button type="submit" className="btn-primary" disabled={isLoading}>
                 {isLoading ? 'INICIANDO...' : 'Iniciar sesión ➔'}
               </button>
+
+              <div className="divider">
+                <span>O CONTINÚA CON</span>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={() => setErrors({ submit: 'No se pudo conectar con Google.' })}
+                  theme="filled_black"
+                  text="continue_with"
+                  shape="rectangular"
+                />
+              </div>
 
               <div className="register-link">
                 ¿Nuevo jugador? <Link to="/registro">Crea una cuenta ↗</Link>
