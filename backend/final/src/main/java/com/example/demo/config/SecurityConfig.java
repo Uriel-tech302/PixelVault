@@ -56,8 +56,8 @@ public class SecurityConfig {
                         .accessDeniedHandler(new RestAccessDeniedHandler()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login",
-                                "/api/auth/forgot-password", "/api/auth/reset-password").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login", "/api/auth/google",
+                                         "/api/auth/forgot-password", "/api/auth/reset-password").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/juegos/**", "/api/generos/**", "/api/plataformas/**")
                         .authenticated()
                         .requestMatchers("/api/juegos/**", "/api/generos/**", "/api/plataformas/**")
