@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.ForgotPasswordRequest;
+import com.example.demo.dto.GoogleLoginRequest;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.LoginResponse;
 import com.example.demo.dto.MensajeResponse;
@@ -9,6 +10,7 @@ import com.example.demo.dto.ResetPasswordRequest;
 import com.example.demo.dto.UsuarioResponse;
 import com.example.demo.security.UsuarioAutenticado;
 import com.example.demo.service.AuthService;
+import com.example.demo.service.GoogleAuthService;
 import com.example.demo.service.PasswordResetService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -26,10 +28,14 @@ public class AuthController {
 
     private final AuthService authService;
     private final PasswordResetService passwordResetService;
+    private final GoogleAuthService googleAuthService;
 
-    public AuthController(AuthService authService, PasswordResetService passwordResetService) {
+    public AuthController(AuthService authService,
+                          PasswordResetService passwordResetService,
+                          GoogleAuthService googleAuthService) {
         this.authService = authService;
         this.passwordResetService = passwordResetService;
+        this.googleAuthService = googleAuthService;
     }
 
     @PostMapping("/register")
@@ -40,6 +46,11 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    @PostMapping("/google")
+    public ResponseEntity<LoginResponse> loginGoogle(@Valid @RequestBody GoogleLoginRequest request) {
+        return ResponseEntity.ok(googleAuthService.loginConGoogle(request.idToken()));
     }
 
     @PostMapping("/logout")

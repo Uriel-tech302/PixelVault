@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
+import { useAuth } from '../context/AuthContext';
 import heroImage from '../assets/hollow-knight.jpg';
 import lockIcon from '../assets/candado.svg';
-import { registerApi } from '../services/authService';
+import { GoogleLogin } from '@react-oauth/google';
+import { registerApi, googleLoginApi } from '../services/authService';
 
 export default function Register() {
+  const { login } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
@@ -90,6 +93,24 @@ export default function Register() {
       } finally {
         setIsLoading(false);
       }
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setIsLoading(true);
+    setErrors({});
+    try {
+      const { token, user } = await googleLoginApi(credentialResponse.credential);
+      login(user, token);
+      navigate(user.role === 'ADMIN' ? '/admin' : '/inventario');
+    } catch (error) {
+      const backendMsg =
+        error.response?.data?.mensaje ||
+        error.response?.data?.message ||
+        'No se pudo continuar con Google.';
+      setErrors({ submit: backendMsg });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -266,6 +287,20 @@ export default function Register() {
                 <span>{isLoading ? 'CREANDO CUENTA...' : 'Crear cuenta'}</span>
                 <span className="btn-arrow">➔</span>
               </button>
+
+              <div className="divider">
+                <span>O CONTINÚA CON</span>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={() => setErrors({ submit: 'No se pudo conectar con Google.' })}
+                  theme="filled_black"
+                  text="continue_with"
+                  shape="rectangular"
+                />
+              </div>
 
               <div className="register-link">
                 ¿Ya tienes cuenta? <Link to="/login">Inicia sesión ↗</Link>
