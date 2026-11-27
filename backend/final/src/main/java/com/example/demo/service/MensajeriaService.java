@@ -38,18 +38,23 @@ public class MensajeriaService {
     }
 
     public void enviarCodigo(String telefono, String canal, String codigo) {
-        String texto = "PixelVault: tu código de verificación es " + codigo + ". Vence en 10 minutos.";
+        log.info("[CODIGO VERIFICACION] Canal={} Destino={} Codigo={}", canal, telefono, codigo);
+
         boolean whatsapp = "WHATSAPP".equals(canal);
         String desde = whatsapp ? desdeWhatsapp : desdeSms;
 
         if (accountSid.isEmpty() || authToken.isEmpty() || desde.isEmpty()) {
-            log.info("[MENSAJERÍA SIMULADA] {} a {}: {}", canal, telefono, texto);
+            log.info("[MENSAJERÍA SIMULADA] {} a {}: codigo={}", canal, telefono, codigo);
             return;
         }
 
+        String cuerpoMensaje = whatsapp
+                ? "PixelVault: tu codigo de verificacion es " + codigo + ". Vence en 10 minutos."
+                : "sms_appointment_reminders";
+
         String para = whatsapp ? "whatsapp:" + telefono : telefono;
         String de = whatsapp && !desde.startsWith("whatsapp:") ? "whatsapp:" + desde : desde;
-        String formulario = "To=" + codificar(para) + "&From=" + codificar(de) + "&Body=" + codificar(texto);
+        String formulario = "To=" + codificar(para) + "&From=" + codificar(de) + "&Body=" + codificar(cuerpoMensaje);
 
         HttpRequest peticion = HttpRequest.newBuilder(
                         URI.create("https://api.twilio.com/2010-04-01/Accounts/" + accountSid + "/Messages.json"))

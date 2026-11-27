@@ -15,18 +15,6 @@ export const profileService = {
   async cambiarPassword(passwordActual, passwordNueva) {
     await api.patch('/perfil/password', { passwordActual, passwordNueva });
   },
-
-  // Verificación de teléfono
-  async solicitarCodigoTelefono(canal = 'SMS') {
-    const { data } = await api.post('/perfil/telefono/codigo', { canal });
-    return data;
-  },
-
-  async verificarTelefono(codigo) {
-    const { data } = await api.post('/perfil/telefono/verificar', { codigo });
-    return data;
-  },
-
   // Steam
   async getEstadoSteam() {
     const { data } = await api.get('/perfil/steam');

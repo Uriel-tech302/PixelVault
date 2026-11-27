@@ -19,6 +19,7 @@ export default function Profile() {
   // Datos de perfil
   const [username, setUsername] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
+  const [telefono, setTelefono] = useState('');
 
   // Cambio de contraseña
   const [passwordActual, setPasswordActual] = useState('');
@@ -40,12 +41,14 @@ export default function Profile() {
 
       setUsername(perfilData.username ?? perfilData.nombre ?? user?.name ?? '');
       setEmail(perfilData.email ?? perfilData.correo ?? user?.email ?? '');
+      setTelefono(perfilData.telefono ?? '');
+
       if (steamData) {
         setSteamEstado(steamData);
         setSteamInput(steamData.steamId ?? steamData.steam ?? '');
       }
     } catch (err) {
-      setErrorMsg(err.response?.data?.message || 'No se pudo cargar tu perfil.');
+      setErrorMsg(err.response?.data?.mensaje || err.response?.data?.message || 'No se pudo cargar tu perfil.');
     } finally {
       setLoading(false);
     }
@@ -65,12 +68,14 @@ export default function Profile() {
     clearFeedback();
     try {
       const updated = await profileService.actualizarPerfil({
-        username: username.trim()
+        username: username.trim(),
+        telefono: telefono.trim() || null
       });
       setUsername(updated.username ?? username);
+      setTelefono(updated.telefono ?? telefono);
       setStatusMsg('Perfil actualizado correctamente.');
     } catch (err) {
-      setErrorMsg(err.response?.data?.message || 'Error al actualizar el perfil.');
+      setErrorMsg(err.response?.data?.mensaje || err.response?.data?.message || 'Error al actualizar el perfil.');
     }
   };
 
@@ -83,7 +88,7 @@ export default function Profile() {
       setPasswordNueva('');
       setStatusMsg('Contraseña actualizada correctamente.');
     } catch (err) {
-      setErrorMsg(err.response?.data?.message || 'No se pudo cambiar la contraseña.');
+      setErrorMsg(err.response?.data?.mensaje || err.response?.data?.message || 'No se pudo cambiar la contraseña.');
     }
   };
 
@@ -95,7 +100,7 @@ export default function Profile() {
       setSteamEstado(res);
       setStatusMsg('Cuenta de Steam vinculada correctamente.');
     } catch (err) {
-      setErrorMsg(err.response?.data?.message || 'No se pudo vincular la cuenta de Steam.');
+      setErrorMsg(err.response?.data?.mensaje || err.response?.data?.message || 'No se pudo vincular la cuenta de Steam.');
     }
   };
 
@@ -107,7 +112,7 @@ export default function Profile() {
       setSteamInput('');
       setStatusMsg('Cuenta de Steam desvinculada.');
     } catch (err) {
-      setErrorMsg(err.response?.data?.message || 'No se pudo desvincular Steam.');
+      setErrorMsg(err.response?.data?.mensaje || err.response?.data?.message || 'No se pudo desvincular Steam.');
     }
   };
 
@@ -120,7 +125,7 @@ export default function Profile() {
         `Steam sincronizado · Total en Steam: ${res.totalSteam ?? 0} | Importados: ${res.importados ?? 0} | Actualizados: ${res.actualizados ?? 0} | Omitidos (fuera de catálogo): ${res.omitidos ?? 0}`
       );
     } catch (err) {
-      setErrorMsg(err.response?.data?.message || 'Error al sincronizar biblioteca de Steam.');
+      setErrorMsg(err.response?.data?.mensaje || err.response?.data?.message || 'Error al sincronizar biblioteca de Steam.');
     } finally {
       setSyncingSteam(false);
     }
@@ -185,6 +190,16 @@ export default function Profile() {
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         required
+                      />
+                    </label>
+                    <label className="profile-field">
+                      <span className="mission-label">TELÉFONO (CON LADA, EJ. +529514299572)</span>
+                      <input
+                        type="tel"
+                        className="profile-input"
+                        placeholder="+529511234567"
+                        value={telefono}
+                        onChange={(e) => setTelefono(e.target.value)}
                       />
                     </label>
                     <button type="submit" className="btn-save-data" style={{ justifySelf: 'start' }}>
