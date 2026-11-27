@@ -17,11 +17,11 @@
 
 ## 🔗 Enlaces del Proyecto
 
-* **Aplicación en producción (HTTPS):** `https://[TU_DOMINIO_O_IP]` *(pendiente de despliegue final)*
-* **URL Base de la API (Producción):** `https://[TU_DOMINIO_O_IP]/api`
+* **Aplicación en producción (HTTPS):** https://pixelvault-ito.duckdns.org/login
+* **URL Base de la API (Producción):** https://pixelvault-ito.duckdns.org/api
 * **URL Base de la API (Local):** `http://localhost:2727/api` *(configurable mediante `PORT`)*
 * **Tablero Kanban (GitHub Projects):** https://github.com/users/Uriel-tech302/projects/3
-* **Prototipo Navegable en Figma:** `https://www.figma.com/proto/KjpV1Zpm1YZWyqYqksQEoi/Tarea?node-id=21-81&t=3QqDub9YTm2iGX1U-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=21%3A81&show-proto-sidebar=1`
+* **Prototipo Navegable en Figma:** https://www.figma.com/proto/KjpV1Zpm1YZWyqYqksQEoi/Tarea?node-id=21-81&t=3QqDub9YTm2iGX1U-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=21%3A81&show-proto-sidebar=1
 
 ---
 
@@ -33,7 +33,7 @@
 | **Backend** | Java 21, Spring Boot 4.1.2, Spring Security, JJWT 0.12.6, Spring Data JPA (Hibernate 7.4), Bean Validation |
 | **Base de Datos** | MySQL 8, Flyway (migraciones versionadas `V1`–`V3`) |
 | **Pruebas de API** | Bruno (colecciones con autenticación automática y casos de éxito/error) |
-| **Despliegue** | VPS Ubuntu (Hetzner Cloud), Nginx, `systemd`, Let's Encrypt (Certbot HTTPS), Postfix (SPF/DKIM), Twilio |
+| **Despliegue** | VPS Ubuntu (Hetzner Cloud), Nginx, `systemd`, Let's Encrypt (Certbot HTTPS), Postfix (SPF/DKIM) |
 
 ---
 
@@ -56,7 +56,7 @@ PixelVault/
 
 El esquema cuenta con **11 tablas** gestionadas mediante migraciones de **Flyway** (`backend/final/src/main/resources/db/migration/`):
 * `V1__schema.sql`: Tablas principales, claves foráneas, restricciones `UNIQUE` y relación N:M (`juego_genero`).
-* `V2__perfil_telefono.sql`: Soporte para verificación de teléfono y códigos de acceso/recuperación.
+* `V2__perfil_telefono.sql`: Soporte para datos de perfil y códigos de acceso/recuperación.
 * `V3__seed.sql`: Datos semilla iniciales (3 roles, 5 plataformas, 10 géneros y 15 videojuegos del catálogo).
 
 ```mermaid
@@ -159,15 +159,15 @@ erDiagram
 | Moderación de reseñas (`/api/moderacion/**`) | Ocultar y eliminar | Ocultar y eliminar | No |
 | Biblioteca personal (`/api/biblioteca/**`) | Sí | Sí | Sí |
 
-### Usuarios de prueba (entorno local)
+### Usuarios de prueba
 
 Las cuentas semilla se crean automáticamente al arrancar el backend mediante `DataSeeder.java` (con contraseñas cifradas usando **BCrypt** y leídas desde variables de entorno; nunca se almacenan credenciales reales en el repositorio):
 
-| Rol | Correo electrónico | Contraseña de ejemplo |
+| Rol | Correo electrónico | Contraseña |
 | :--- | :--- | :--- |
-| **ADMIN** | `admin@pixelvault.com` | `Pixel2026!` |
-| **MODERADOR** | `moderador@pixelvault.com` | `Pixel2026!` |
-| **USUARIO** | `usuario@pixelvault.com` | `Pixel2026!` |
+| **ADMIN** | `admin@pixelvault.com` | `12345SSs+` |
+| **MODERADOR** | `moderador@pixelvault.com` | `12345SSs+` |
+| **USUARIO** | `usuario@pixelvault.com` | `12345SSs+` |
 
 ---
 
@@ -270,7 +270,7 @@ Todas las rutas protegidas requieren el encabezado `Authorization: Bearer <token
 El repositorio incluye colecciones de **Bruno** listas para validar autenticación, paginación, filtros y códigos de error (`400`, `401`, `403`, `404`, `409`, `422`):
 1. Abre **Bruno** y selecciona **Open Collection**.
 2. Carga las carpetas `backend/bruno-paso3/` o `backend/bruno-paso3b/`.
-3. Selecciona el entorno `local` y define las contraseñas secretas (`adminPassword`, `moderadorPassword`, `usuarioPassword`).
+3. Selecciona el entorno `local` (o configura `baseUrl` como `https://pixelvault-ito.duckdns.org` para probar contra producción) y define las contraseñas (`adminPassword`, `moderadorPassword`, `usuarioPassword`).
 
 ---
 

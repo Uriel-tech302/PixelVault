@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'; // Si aún no usas react-router-dom, ca
 import './Login.css';
 import heroImage from '../assets/hollow-knight.jpg';
 import lockIcon from '../assets/candado.svg';
+import { forgotPasswordApi } from '../services/authService';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -32,12 +33,14 @@ export default function ForgotPassword() {
 
     setIsLoading(true);
     try {
-      console.log('Enviando enlace de recuperación a:', email);
-      // Aquí conectarás Axios hacia tu endpoint de recuperación
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await forgotPasswordApi(email.trim());
       setIsSent(true);
     } catch (err) {
-      setError('No se pudo enviar el enlace. Inténtalo de nuevo.');
+      const backendMsg =
+      err.response?.data?.mensaje ||
+      err.response?.data?.message ||
+      'No se pudo enviar el enlace. Inténtalo de nuevo.';
+      setError(backendMsg);
     } finally {
       setIsLoading(false);
     }

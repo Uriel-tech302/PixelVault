@@ -39,7 +39,7 @@ export async function forgotPasswordApi(email) {
 }
 
 export async function resetPasswordApi({ token, nuevaPassword }) {
-  const { data } = await api.post('/auth/reset-password', { token, nuevaPassword });
+  const { data } = await api.post('/auth/reset-password', { token, password: nuevaPassword });
   return data;
 }
 export const googleLoginApi = async (idToken) => {
